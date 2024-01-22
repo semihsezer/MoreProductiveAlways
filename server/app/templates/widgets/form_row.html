@@ -1,0 +1,5 @@
+{% load widget_tweaks %}
+<div class="form-group {{ widget.size_class }}">
+  {{ field.label_tag }}
+  {% render_field field class="form-control" %}
+</div>

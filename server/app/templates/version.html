@@ -1,0 +1,27 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+<style>
+</style>
+{% endblock head %}
+{% block body %}
+
+{% load auth_extras %}
+<script type="text/javascript">
+</script>
+
+<div class="row" style="margin-left:30px;position:relative">
+  <div id="mycontainer" class="col-md-10">
+    <h3>Product Information:</h3>
+    <p>{{ versionText }}</p>
+    {% for text in versionArray %}
+    <p>{{ text }}</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock body %}
+<body>
+
+</body>
+</html>

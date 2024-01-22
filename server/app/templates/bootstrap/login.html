@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Readability Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+<script type="text/javascript">
+    function displayWarning(){
+      var str = "{{ loginFail }}";
+      var loginFailMessage = "{{ message }}";
+      $('#login_failed').hide();
+      if(str == "True"){
+        document.getElementById("login_failed").innerHTML = loginFailMessage;
+        $('#login_failed').show();
+      }
+    }
+</script>
+<body onload="displayWarning()">
+<div class="col-md-3 text-center" style="margin-right:auto;margin-left:auto;margin-top: 150px">
+<form class="form-signin" method="post">
+    {% csrf_token %}
+    <div>
+        <h3>Readability Prediction</h3>
+    </div>
+    <label for="username" class="sr-only">Username</label>
+    <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+    <label for="password" class="sr-only">Password</label>
+    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <div class="row">
+        <div style="margin-left:auto;margin-right:auto;">
+            <div class="text-center" style="padding:5px">
+                <span id="login_info" style="width:100%;text-align:center;color:grey">Not a user yet? <a href="{% url 'signup' %}">Sign up</a></span>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+</body>
+</html>
+<!---
+
+
+
+<h2>Login</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Login</button>
+</form>
+
+<form class="form-signin" method="post">
+    {% csrf_token %}
+    <div>
+        <h3>Usage Explorer</h3>
+    </div>
+    <label for="username" class="sr-only">Username</label>
+    <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+    <label for="password" class="sr-only">Password</label>
+    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <div class="row">
+        <div class="col-lg-15">
+            <div class="text-center" style="padding:5px">
+                <span id="login_failed" style="width:100%;text-align:center;color:red"></span>
+            </div>
+            <div class="text-center" style="padding:5px">
+                <a href="/orcaops/aboutus" tabindex="5" class="forgot-password">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>
+-->

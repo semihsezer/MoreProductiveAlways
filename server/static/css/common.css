@@ -1,0 +1,19 @@
+/* ------- Variables ------------- */
+:root {
+  --first-tile-bg-color: #d7e9fc;
+}
+
+/* ------- Variables End --------- */
+
+ /* horizontally-centered */
+.h-centered {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* ------- Landing Page ---------- */
+#first-tile {
+  background-color: var(--first-tile-bg-color);
+}
+
+/* ------- Landing Page End ------ */

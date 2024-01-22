@@ -1,0 +1,52 @@
+{% extends "bootstrap/base.html" %}
+{% load humanize %}
+{% load reviews %}
+
+{% block head %}
+<style>
+</style>
+{% endblock head %}
+{% block body %}
+
+
+<div id="first-tile" class="row" >
+  <div class="container" class="col-md-7 float-left" style="margin-top: 10%;margin-bottom: 10%">
+    <div id="central-area" class="col-md-7 h-centered" style="justify-content: center;margin-top: 10%;margin-bottom: 10%">
+      <h3 class="h-centered" style="text-align:center;margin-bottom: 15px">Welcome to Readability Prediction</h3>
+      <div style="display:flex;justify-content:center">
+      </div>
+      <div style="display:flex;justify-content:center">
+        <div id="search-bar" class="col-md-7 form-group">
+            <input id="address-dropdown" class="form-control" placeholder="Search for content (not implemented)" style="margin-top:30px">
+            <button type="button" class="btn btn-primary" style="margin-top:10px;margin-left:10px;margin-right:10px" onclick="testAjax()">Test Ajax</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% load auth_extras %}
+<script type="text/javascript">
+
+  function testAjax(){
+    return $.ajax({
+      url: '/ajax/example',
+      data: {
+      },
+      dataType: 'json',
+      success: function (data) {
+        displayToast("Test Ajax");
+      },
+      error: function(xhr, opts, err){
+        displayError(xhr, opts, err);
+      }
+    });
+  };
+
+</script>
+
+{% endblock body %}
+<body>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+Django==3.0.8
+django-background-tasks==1.2.5
+django-rated-reviews==0.6.0
+django-structlog==1.5.0
+django-widget-tweaks==1.4.8
+psycopg2==2.8.4
+pytest==6.1.1
+pytest-cov==2.10.1
+pytz==2020.1
+requests==2.24.0
+uwsgi==2.0.18
