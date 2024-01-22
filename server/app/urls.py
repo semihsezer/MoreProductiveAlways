@@ -14,5 +14,5 @@ urlpatterns = [
     path('accounts/logout/',views.logout_user, name='logout_user'),
 
     # Ajax
-    url(r'^ajax/example$', views.example_ajax, name='example_ajax'),
+    url(r'^api/ajax/example$', views.example_ajax, name='example_ajax'),
 ]
