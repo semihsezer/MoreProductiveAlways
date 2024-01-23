@@ -14,7 +14,7 @@ services:
         POSTGRES_PASSWORD: development
         LOG_LEVEL: INFO
     #command: bash -c "tail -f /dev/null"
-    command: bash -c "python manage.py makemigrations app && python manage.py migrate && python manage.py load_testing_data && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py makemigrations app && python manage.py migrate && python manage.py load_sample_data && python manage.py runserver 0.0.0.0:8000"
     ports:
         - "8000:8000"
     depends_on:
