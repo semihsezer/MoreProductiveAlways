@@ -97,6 +97,28 @@ def health(request):
     }
     return JsonResponse(data)
 
+def get_shortcuts(request):
+    if request.method != 'GET':
+        return HttpResponseServerError('Only GET is allowed')
+    
+    query = models.Shortcut.objects
+    if request.GET.get('application_name'):
+        application_name = request.GET.get('application_name')
+        query = query.filter(application__name=application_name)
+    
+    # LATER: use fuzzy search
+    if request.GET.get('description'):
+        description = request.GET.get('description')
+        query = query.filter(description__icontains=description)
+   
+        
+    # LATER: handle pagination
+    shortcuts = query.all()
+    shortcuts = utils.serialize_shortcuts(shortcuts)
+    return JsonResponse(shortcuts, safe=False)
+    
+
+
 @login_required(login_url='/accounts/login/')
 def index(request):
     test_list = ['test1', 'test2']

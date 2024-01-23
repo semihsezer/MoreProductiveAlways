@@ -15,4 +15,5 @@ urlpatterns = [
 
     # Ajax
     url(r'^api/ajax/example$', views.example_ajax, name='example_ajax'),
+    url(r'^api/shortcut$', views.get_shortcuts, name='get_shortcuts'),
 ]

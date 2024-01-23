@@ -31,16 +31,22 @@ class Application(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-  
+USERSHORTCUT_CATEGORY_CHOICES = [
+    ('Saved', 'Saved'),
+    ('Learning', 'Learning'),
+    ('Mastered', 'Mastered'),
+    ('Not Relevant', 'Not Relevant'),
+]
+
 class Shortcut(models.Model):
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    command = models.CharField(max_length=200)
-    mac = models.CharField(max_length=200)
-    windows = models.CharField(max_length=200)
-    linux = models.CharField(max_length=200)
-    description = models.CharField(max_length=500)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, db_index=True)
+    command = models.CharField(max_length=200, db_index=True)
+    mac = models.CharField(max_length=200, db_index=True)
+    windows = models.CharField(max_length=200, db_index=True)
+    linux = models.CharField(max_length=200, db_index=True)
+    description = models.CharField(max_length=500, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
     
     class Meta:
         unique_together = ('application', 'command')
@@ -48,23 +54,17 @@ class Shortcut(models.Model):
     def __str__(self):
         return f"{self.application} - {self.command} - {self.mac}"
 
-USERSHORTCUT_CATEGORY_CHOICES = [
-    ('Saved', 'Saved'),
-    ('Learning', 'Learning'),
-    ('Mastered', 'Mastered'),
-]
-
-# TODO: make category an enum field or restricted choice field
 class UserShortcut(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    shortcut = models.ForeignKey(Shortcut, on_delete=models.CASCADE)
-    category = models.CharField(max_length=200, choices=USERSHORTCUT_CATEGORY_CHOICES, default="Saved")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    shortcut = models.ForeignKey(Shortcut, on_delete=models.CASCADE, db_index=True)
+    category = models.CharField(max_length=200, choices=USERSHORTCUT_CATEGORY_CHOICES, default="Saved", db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
     
     class Meta:
         unique_together = ('user', 'shortcut')
 
     def __str__(self):
         return f"{self.user} - {self.shortcut}"
+
 

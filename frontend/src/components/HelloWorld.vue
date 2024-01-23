@@ -9,13 +9,14 @@ defineProps({
 
 <template>
   <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+    <h1>{{ msg }}</h1>
+    <h3>Here are your shortcuts:</h3>
+    <div v-for="shortcut in shortcuts">
+      <p>{{ shortcut.application_name }} - {{ shortcut.command }} - {{ shortcut.mac }}</p>
+    </div>
   </div>
+
+
 </template>
 
 <script>
@@ -25,17 +26,18 @@ export default {
   name: 'YourComponentName',
   data() {
     return {
-      testData: {}
+      shortcuts: []
       };
   },
   methods: {
-    async getResume() {
-      var resp = await axios.get('/api/ajax/example');
-      this.testData = resp.data;
+    async getShortcuts() {
+      var resp = await axios.get('/api/shortcut');
+      this.shortcuts = resp.data;
+      console.log(shortcuts);
     }
   },
   beforeMount() {
-     this.getResume()
+     this.getShortcuts()
   },
 };
 </script>

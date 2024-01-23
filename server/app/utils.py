@@ -13,3 +13,21 @@ def parse_str_bool(str_bool, default=None):
         return default
 
 
+# implement serialize_shortcuts
+def serialize_shortcuts(shortcuts):
+    '''Helper method to serialize shortcuts'''
+    serialized_shortcuts = []
+    for shortcut in shortcuts:
+        serialized_shortcut = {
+            'id': shortcut.id,
+            'application_name': shortcut.application.name,
+            'command': shortcut.command,
+            'mac': shortcut.mac,
+            'windows': shortcut.windows,
+            'linux': shortcut.linux,
+            'description': shortcut.description,
+            'created_at': shortcut.created_at,
+            'updated_at': shortcut.updated_at,
+        }
+        serialized_shortcuts.append(serialized_shortcut)
+    return serialized_shortcuts
