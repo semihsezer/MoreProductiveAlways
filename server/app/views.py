@@ -79,6 +79,7 @@ def signup(request):
 def account(request):
     user = request.user
     template = loader.get_template('account.html')
+    context = {}
     return HttpResponse(template.render(context, request))
 
 @login_required(login_url='/accounts/login/')
