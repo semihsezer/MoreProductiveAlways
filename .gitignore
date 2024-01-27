@@ -161,3 +161,8 @@ cython_debug/
 
 # Local docker files
 .local
+
+.DS_Store
+server/.DS_Store
+bin/*
+share/*
