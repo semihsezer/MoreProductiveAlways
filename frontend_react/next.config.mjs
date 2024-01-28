@@ -7,7 +7,8 @@ const nextConfig = {
           destination: 'http://localhost:8000/api/:path*'
         }
       ]
-    }
+    },
+    reactStrictMode: true
   };
 
 // next.config.js

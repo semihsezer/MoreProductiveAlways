@@ -1,7 +1,13 @@
 'use client';
 import Image from "next/image";
-import styles from "./page.module.css";
+import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { useState, useEffect } from 'react';
+
+import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+
 
 export function Shortcut({shortcut}) {
   return (
@@ -10,7 +16,14 @@ export function Shortcut({shortcut}) {
 }
 
 export default function Home() {
-	const [shortcuts, setShortcuts] = useState([]); 
+	const [shortcuts, setShortcuts] = useState([]);
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    'application.name': { value: null, matchMode: FilterMatchMode.CONTAINS },
+    command: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    mac: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    description: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 
   function callAPI(){
 		try {
@@ -27,18 +40,28 @@ export default function Home() {
   });
 
   function prepareShortcuts(){
-    return shortcuts.map((shortcut) => {
-      return (
-        <Shortcut key={shortcut.id} shortcut={shortcut} />
-        );
-    });
+    return (
+      <div className="card">
+        <DataTable value={shortcuts} filters={filters} filterDisplay="row" 
+          globalFilterFields={['application.name', 'command', 'mac', 'description']} tableStyle={{ minWidth: '60rem' }}>
+          <Column field="application.name" filter filterPlaceholder="Search by application" header="Application"></Column>
+          <Column field="command" filter filterPlaceholder="Search by command" header="Command"></Column>
+          <Column field="mac" header="Shortcut (Mac)" filter filterPlaceholder="Search by shortcut"></Column>
+          <Column field="description" header="Description" filter filterPlaceholder="Search by description" ></Column>
+        </DataTable>
+      </div>
+    )
+    // return shortcuts.map((shortcut) => {
+    //   return (
+    //     <Shortcut key={shortcut.id} shortcut={shortcut} />
+    //     );
+    // });
   }
 
 	return (
-		<div className={styles.container}>
-			<main className={styles.main}>
-				<button onClick={callAPI}>Make API Call</button>
-        {prepareShortcuts()}
+		<div>
+			<main>
+          {prepareShortcuts()}
 			</main>
 		</div>
 	);

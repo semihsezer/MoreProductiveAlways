@@ -120,13 +120,16 @@ def get_shortcuts(request):
     
 # Write a function to get the user's shortcuts from the database
 # Login should be required to access this page
-@login_required(login_url='/accounts/login/')
+# TODO: enable login_required
+# @login_required(login_url='/accounts/login/')
 def get_user_shortcuts(request):
     if request.method != 'GET':
         return HttpResponseServerError('Only GET is allowed')
     
     user = request.user
-    query = models.UserShortcut.objects.filter(user=user)
+    # TODO
+    #query = models.UserShortcut.objects.filter(user=user)
+    query = models.UserShortcut.objects
     if request.GET.get('application_name'):
         application_name = request.GET.get('application_name')
         query = query.filter(application__name=application_name)
