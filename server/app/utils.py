@@ -12,22 +12,58 @@ def parse_str_bool(str_bool, default=None):
     else:
         return default
 
+def serialize_application(application):
+    '''Helper method to serialize application'''
+    serialized_application = {
+        'id': application.id,
+        'name': application.name,
+        'description': application.description,
+        'created_at': application.created_at,
+        'updated_at': application.updated_at,
+    }
+    return serialized_application
+
+def serialize_shortcut(shortcut):
+    '''Helper method to serialize shortcut'''
+    serialized_shortcut = {
+        'id': shortcut.id,
+        'application': serialize_application(shortcut.application),
+        'command': shortcut.command,
+        'mac': shortcut.mac,
+        'windows': shortcut.windows,
+        'linux': shortcut.linux,
+        'description': shortcut.description,
+        'created_at': shortcut.created_at,
+        'updated_at': shortcut.updated_at,
+    }
+    return serialized_shortcut
 
 # implement serialize_shortcuts
 def serialize_shortcuts(shortcuts):
     '''Helper method to serialize shortcuts'''
     serialized_shortcuts = []
     for shortcut in shortcuts:
-        serialized_shortcut = {
-            'id': shortcut.id,
-            'application_name': shortcut.application.name,
-            'command': shortcut.command,
-            'mac': shortcut.mac,
-            'windows': shortcut.windows,
-            'linux': shortcut.linux,
-            'description': shortcut.description,
-            'created_at': shortcut.created_at,
-            'updated_at': shortcut.updated_at,
-        }
-        serialized_shortcuts.append(serialized_shortcut)
+        serialized_shortcuts.append(serialize_shortcut(shortcut))
     return serialized_shortcuts
+
+def serialize_user_shortcut(user_shortcut):
+    """Helper method that serializes user_shortcut: UserShortcut based on UserShortcut model"""
+    serialized_user_shortcut = {
+        'id': user_shortcut.id,
+        'username': user_shortcut.user.username,
+        'shortcut': serialize_shortcut(user_shortcut.shortcut),
+        'user_mac': user_shortcut.user_mac,
+        'user_windows': user_shortcut.user_windows,
+        'user_linux': user_shortcut.user_linux,
+        'category': user_shortcut.category,
+        'created_at': user_shortcut.created_at,
+        'updated_at': user_shortcut.updated_at,
+    }
+    return serialized_user_shortcut
+
+def serialize_user_shortcuts(user_shortcuts):
+    """Helper method that serializes user_shortcuts: List[UserShortcut] based on UserShortcut model"""
+    serialized_user_shortcuts = []
+    for user_shortcut in user_shortcuts:
+        serialized_user_shortcuts.append(serialize_user_shortcut(user_shortcut))
+    return serialized_user_shortcuts

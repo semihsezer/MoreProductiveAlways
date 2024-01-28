@@ -118,7 +118,29 @@ def get_shortcuts(request):
     shortcuts = utils.serialize_shortcuts(shortcuts)
     return JsonResponse(shortcuts, safe=False)
     
-
+# Write a function to get the user's shortcuts from the database
+# Login should be required to access this page
+@login_required(login_url='/accounts/login/')
+def get_user_shortcuts(request):
+    if request.method != 'GET':
+        return HttpResponseServerError('Only GET is allowed')
+    
+    user = request.user
+    query = models.UserShortcut.objects.filter(user=user)
+    if request.GET.get('application_name'):
+        application_name = request.GET.get('application_name')
+        query = query.filter(application__name=application_name)
+    
+    # LATER: use fuzzy search
+    if request.GET.get('description'):
+        description = request.GET.get('description')
+        query = query.filter(description__icontains=description)
+   
+        
+    # LATER: handle pagination
+    user_shortcuts = query.all()
+    user_shortcuts = utils.serialize_user_shortcuts(user_shortcuts)
+    return JsonResponse(user_shortcuts, safe=False)
 
 @login_required(login_url='/accounts/login/')
 def index(request):

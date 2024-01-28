@@ -5,6 +5,7 @@ class Command(BaseCommand):
     help = "Creates admin user if it doesn't exist"
     def add_arguments(self, parser):
         parser.add_argument('--source', action='store',
+                            default='/server/app/management/scripts/sample_data.xlsx',
                             help='Indicates the source of the sample data to load. JSON or Excel file.')
         parser.add_argument('--delete', action='store_true', 
                             help='Indicates whether or not to delete the sample data')

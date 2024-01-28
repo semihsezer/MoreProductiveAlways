@@ -3,9 +3,9 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { useState, useEffect } from 'react';
 
-export function Shortcut({command, mac, description}) {
+export function Shortcut({shortcut}) {
   return (
-    <p>{command} - {mac} - {description}</p>
+    <p>{shortcut.application.name} - {shortcut.command} - {shortcut.mac} - {shortcut.description}</p>
   );
 }
 
@@ -29,7 +29,7 @@ export default function Home() {
   function prepareShortcuts(){
     return shortcuts.map((shortcut) => {
       return (
-        <Shortcut key={shortcut.id} command={shortcut.command} mac={shortcut.mac} description={shortcut.description} />
+        <Shortcut key={shortcut.id} shortcut={shortcut} />
         );
     });
   }
