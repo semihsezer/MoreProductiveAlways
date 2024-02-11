@@ -14,9 +14,9 @@ export function Shortcut({shortcut}) {
   );
 }
 
-export default function HelloWorld({msg}) {
+export default function UserShortcutsPage({msg}) {
 	const [shortcuts, setShortcuts] = useState([]);
-    const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     'application.name': { value: null, matchMode: FilterMatchMode.CONTAINS },
     command: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -26,7 +26,7 @@ export default function HelloWorld({msg}) {
 
   function callAPI(){
 		try {
-      fetch(`/api/shortcut/`)
+      fetch(`/api/user/shortcut/`)
         .then((res) => 
             res.json())
         .then((data) => 
@@ -43,13 +43,12 @@ export default function HelloWorld({msg}) {
   function prepareShortcuts(){
     return (
       <div className="card">
-        <p>Discover</p>
         <DataTable value={shortcuts} filters={filters} filterDisplay="row" 
-          globalFilterFields={['application.name', 'command', 'mac', 'description']} tableStyle={{ minWidth: '60rem' }}>
-          <Column field="application.name" filter filterPlaceholder="Search by application" header="Application"></Column>
-          <Column field="command" filter filterPlaceholder="Search by command" header="Command"></Column>
-          <Column field="mac" header="Shortcut (Mac)" filter filterPlaceholder="Search by shortcut"></Column>
-          <Column field="description" header="Description" filter filterPlaceholder="Search by description" ></Column>
+          globalFilterFields={['application.name', 'shortcut.command', 'shortcut.mac', 'shortcut.description']} tableStyle={{ minWidth: '60rem' }}>
+          <Column field="shortcut.application.name" filter filterPlaceholder="Search by application" header="Application"></Column>
+          <Column field="shortcut.command" filter filterPlaceholder="Search by command" header="Command"></Column>
+          <Column field="shortcut.mac" header="Shortcut (Mac)" filter filterPlaceholder="Search by shortcut"></Column>
+          <Column field="shortcut.description" header="Description" filter filterPlaceholder="Search by description" ></Column>
         </DataTable>
       </div>
     )
@@ -57,7 +56,7 @@ export default function HelloWorld({msg}) {
 
 	return (
 		<div>
-            {prepareShortcuts()}
+      {prepareShortcuts()}
 		</div>
 	);
 }

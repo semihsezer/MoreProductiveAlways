@@ -8,10 +8,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import HelloWorld from './HelloWorld';
-import HelloWorld2 from './HelloWorld2';
-import Applications from './Applications';
-import Account from './Account';
+import DiscoverPage from './components/pages/DiscoverPage';
+import ApplicationsPage from './components/pages/ApplicationsPage';
+import AccountPage from './components/pages/AccountPage';
+import UserShortcutsPage from './components/pages/UserShortcutsPage';
+import IdeasPage from './components/pages/IdeasPage';
 import { Outlet } from "react-router-dom";
 import history from './history'
 import { useState } from 'react';
@@ -24,19 +25,23 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/discover",
-        element: <HelloWorld />,
+        element: <DiscoverPage />,
       },
       {
         path: "/user/shortcuts",
-        element: <HelloWorld2 />,
+        element: <UserShortcutsPage />,
       },
       {
         path: "/user/applications",
-        element: <Applications />,
+        element: <ApplicationsPage />,
+      },
+      {
+        path: "/user/ideas",
+        element: <IdeasPage />,
       },
       {
         path: "/user/account",
-        element: <Account />,
+        element: <AccountPage />,
       }
     ]
   },

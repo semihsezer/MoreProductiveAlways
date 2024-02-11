@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Application, Shortcut, UserShortcut
+import app.models as models
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'category')
@@ -13,8 +13,13 @@ class ShortcutAdmin(admin.ModelAdmin):
 class UserShortcutAdmin(admin.ModelAdmin):
     list_display = ('user', 'shortcut', 'category')
     search_fields = ['user', 'shortcut']
+
+class IdeaAdmin(admin.ModelAdmin):
+    list_display = ('user', 'title', 'description', 'application', 'type', 'status')
+    search_fields = ['user', 'title', 'description', 'application']
     
 
-admin.site.register(Application, ApplicationAdmin)
-admin.site.register(Shortcut, ShortcutAdmin)
-admin.site.register(UserShortcut, UserShortcutAdmin)
+admin.site.register(models.Application, ApplicationAdmin)
+admin.site.register(models.Shortcut, ShortcutAdmin)
+admin.site.register(models.UserShortcut, UserShortcutAdmin)
+admin.site.register(models.Idea, IdeaAdmin)

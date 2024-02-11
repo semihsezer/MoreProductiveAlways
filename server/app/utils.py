@@ -67,3 +67,26 @@ def serialize_user_shortcuts(user_shortcuts):
     for user_shortcut in user_shortcuts:
         serialized_user_shortcuts.append(serialize_user_shortcut(user_shortcut))
     return serialized_user_shortcuts
+
+def serialize_idea(idea):
+    """Helper method that serializes idea: Idea based on Idea model"""
+    serialized_idea = {
+        'id': idea.id,
+        'user': idea.user.username,
+        'title': idea.title,
+        'description': idea.description,
+        'application': serialize_application(idea.application) if idea.application else None,
+        'type': idea.type,
+        'status': idea.status,
+        'created_at': idea.created_at,
+        'updated_at': idea.updated_at,
+    }
+    
+    return serialized_idea
+
+def serialize_user_ideas(user_ideas):
+    """Helper method that serializes user_ideas: List[Idea] based on Idea model"""
+    serialized_user_ideas = []
+    for user_idea in user_ideas:
+        serialized_user_ideas.append(serialize_idea(user_idea))
+    return serialized_user_ideas

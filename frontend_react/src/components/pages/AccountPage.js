@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function Applications({}){
+export default function AccountPage({}){
     return (
         <div>
-            <h1>Applications</h1>
+            <h1>Account</h1>
         </div>
     )
 }

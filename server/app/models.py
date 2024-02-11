@@ -81,3 +81,24 @@ class UserShortcut(models.Model):
         return f"{self.user} - {self.shortcut}"
 
 
+IDEA_STATUS_CHOICES = [
+    ('Open', 'Open'),
+    ('In Progress', 'In Progress'),
+    ('Closed', 'Closed'),
+    ('Done', 'Done'),
+]
+
+class Idea(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    title = models.CharField(max_length=500, db_index=True)
+    type = models.CharField(max_length=200, null=True, blank=True, db_index=True)
+    description = models.CharField(max_length=500, null=True, blank=True, db_index=True)
+    application = models.ForeignKey(Application, null=True, on_delete=models.CASCADE, db_index=True)
+    status = models.CharField(max_length=200, choices=IDEA_STATUS_CHOICES, default="Open", db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
+    
+    def __str__(self):
+        return f"{self.user} - {self.title}"
+                             
+    

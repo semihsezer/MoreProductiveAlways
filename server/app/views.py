@@ -138,13 +138,32 @@ def get_user_shortcuts(request):
     if request.GET.get('description'):
         description = request.GET.get('description')
         query = query.filter(description__icontains=description)
-   
-        
-    # LATER: handle pagination
-    user_shortcuts = query.all()
-    user_shortcuts = utils.serialize_user_shortcuts(user_shortcuts)
-    return JsonResponse(user_shortcuts, safe=False)
 
+def get_user_ideas(request):
+    if request.method == 'GET':
+        user = request.user
+        # TODO
+        #query = models.UserShortcut.objects.filter(user=user)
+        query = models.Idea.objects
+    
+        # LATER: handle pagination
+        user_ideas = query.all()
+        user_ideas = utils.serialize_user_ideas(user_ideas)
+        return JsonResponse(user_ideas, safe=False)
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        user = request.user
+        title = data.get('title')
+        description = data.get('description')
+        application = data.get('application')
+        type = data.get('type')
+        status = data.get('status')
+        idea = models.Idea(user=user, title=title, description=description, application=application)
+        idea.save()
+        return JsonResponse({'message': 'Idea created successfully'}, status=201)
+    else:
+        return HttpResponseServerError('Only GET and POST are allowed')
+    
 @login_required(login_url='/accounts/login/')
 def index(request):
     test_list = ['test1', 'test2']
