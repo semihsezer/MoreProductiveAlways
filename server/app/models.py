@@ -88,10 +88,17 @@ IDEA_STATUS_CHOICES = [
     ('Done', 'Done'),
 ]
 
+IDEA_TYPE_CHOICES = [
+    ('Shortcut', 'Shortcut'),
+    ('Workflow', 'Workflow'),
+    ('Application', 'Application'),
+    ('Extension/Plugin', 'Extension/Plugin'),
+]
+
 class Idea(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
     title = models.CharField(max_length=500, db_index=True)
-    type = models.CharField(max_length=200, null=True, blank=True, db_index=True)
+    type = models.CharField(max_length=200, choices=IDEA_TYPE_CHOICES, default="Shortcut", db_index=True)
     description = models.CharField(max_length=500, null=True, blank=True, db_index=True)
     application = models.ForeignKey(Application, null=True, on_delete=models.CASCADE, db_index=True)
     status = models.CharField(max_length=200, choices=IDEA_STATUS_CHOICES, default="Open", db_index=True)

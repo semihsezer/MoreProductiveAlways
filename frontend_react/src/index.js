@@ -8,11 +8,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import DiscoverPage from './components/pages/DiscoverPage';
-import ApplicationsPage from './components/pages/ApplicationsPage';
-import AccountPage from './components/pages/AccountPage';
-import UserShortcutsPage from './components/pages/UserShortcutsPage';
-import IdeasPage from './components/pages/IdeasPage';
+import DiscoverPage from './pages/DiscoverPage';
+import ApplicationsPage from './pages/ApplicationsPage';
+import AccountPage from './pages/AccountPage';
+import UserShortcutsPage from './pages/UserShortcutsPage';
+import IdeasPage from './pages/IdeasPage';
 import { Outlet } from "react-router-dom";
 import history from './history'
 import { useState } from 'react';

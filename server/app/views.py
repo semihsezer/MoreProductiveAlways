@@ -160,7 +160,26 @@ def get_user_ideas(request):
         status = data.get('status')
         idea = models.Idea(user=user, title=title, description=description, application=application)
         idea.save()
-        return JsonResponse({'message': 'Idea created successfully'}, status=201)
+        return JsonResponse({'data': {'message': 'Idea created successfully'}}, status=201)
+    elif request.method == "PUT":
+        # TODO: cleanup when we switch to Django REST
+        data = json.loads(request.body)
+        id = data.get('id') 
+        idea = models.Idea.objects.get(id=id)
+        
+        idea.title = data.get('title')
+        idea.description = data.get('description')
+        idea.application = data.get('application')
+        idea.type = data.get('type')
+        idea.status = data.get('status')
+        idea.save()
+        
+        return JsonResponse({'data': {'message': 'Idea updated successfully'}}, status=200)
+    elif request.method == "DELETE":
+        data = json.loads(request.body)
+        ids = data.get('ids')
+        models.Idea.objects.filter(id__in=ids).delete()
+        return JsonResponse({'message': 'Ideas were deleted successfully.'}, status=200)
     else:
         return HttpResponseServerError('Only GET and POST are allowed')
     
