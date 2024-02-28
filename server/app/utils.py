@@ -18,10 +18,18 @@ def serialize_application(application):
         'id': application.id,
         'name': application.name,
         'description': application.description,
+        'category': application.category,
         'created_at': application.created_at,
         'updated_at': application.updated_at,
     }
     return serialized_application
+
+def serialize_applications(applications):
+    '''Helper method to serialize applications'''
+    serialized_applications = []
+    for application in applications:
+        serialized_applications.append(serialize_application(application))
+    return serialized_applications
 
 def serialize_shortcut(shortcut):
     '''Helper method to serialize shortcut'''

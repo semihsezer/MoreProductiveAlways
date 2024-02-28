@@ -139,6 +139,14 @@ def get_user_shortcuts(request):
         description = request.GET.get('description')
         query = query.filter(description__icontains=description)
 
+def get_applications(request):
+    if request.method == 'GET':
+        applications = models.Application.objects.all()
+        applications = utils.serialize_applications(applications)
+        return JsonResponse(applications, safe=False)
+    else:
+        return HttpResponseServerError('Only GET is allowed')
+
 def get_user_ideas(request):
     if request.method == 'GET':
         user = request.user

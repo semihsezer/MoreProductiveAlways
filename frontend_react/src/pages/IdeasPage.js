@@ -15,11 +15,12 @@ axios.defaults.xsrfCookieName = "csrftoken";
 
 export default function IdeasPage({}){
     const [ideas, setIdeas] = useState([]);
+    // TODO: Extract IdeaTable to a new component
+    // TODO: Add second table to display completed ideas
     // TODO: Add other edit fields to IdeaDialog
     // TODO: display toast on delete success/failure
     // TODO: Row click should show idea detail modal
     // TODO: get IdeaTypes from API
-    // TODO: Application types, get from API, use autocomplete
     // TODO: Escape should disable edit mode
     // TODO: fix width-shift on edit
     // TODO: Add & Implement Delete Button
@@ -33,7 +34,6 @@ export default function IdeasPage({}){
     }
     const [idea, setIdea] = useState(emptyIdea);
 
-    const [types] = useState(['Shortcut', 'Workflow', 'Application', 'Extension/Plugin']);
     const [selectedIdeas, setSelectedIdeas] = useState(null);
     const [newIdeaDilogVisible, setNewIdeaDialogVisible] = useState(false);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -68,30 +68,23 @@ export default function IdeasPage({}){
         }
     }
 
-    function onRowEditComplete(e){
-        let _ideas = [...ideas];
-        let { newData, index } = e;
-        _ideas[index] = newData;
-        setIdeas(_ideas);
+    function updateIdea(rowData){
+        axios.put(`/api/user/ideas`, rowData)
+            .then((response) => {
+                console.log(response);
+                getIdeas();
+            });
     }
 
-    const typeEditor = (options) => {
-        return (
-            <Dropdown
-                value={options.value}
-                options={types}
-                onChange={(e) => options.editorCallback(e.value)}
-                placeholder="Select a Type"
-                itemTemplate={(option) => {
-                    return <Tag value={option} severity={null}></Tag>;
-                }}
-            />
-        );
-    };
+    function completeIdea(rowData){
+        rowData.status = 'Closed';
+        updateIdea(rowData);
+    }
 
-    const textEditor = (options) => {
-        return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
-    };
+    function reOpenIdea(rowData){
+        rowData.status = 'Open';
+        updateIdea(rowData);
+    }
 
     const openNewIdeaDialog = () => {
         setIdea(emptyIdea);
@@ -133,6 +126,12 @@ export default function IdeasPage({}){
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
+                {rowData.status === 'Open' &&
+                    <Button icon="pi pi-check" rounded outlined className="mr-2" onClick={() => completeIdea(rowData)} />
+                }
+                {rowData.status === 'Closed' &&
+                    <Button icon="pi pi-check-square" rounded outlined className="mr-2" onClick={() => reOpenIdea(rowData)} />
+                }
                 <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editIdea(rowData)} />
                 <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => openDeleteDialog(rowData)} />
             </React.Fragment>
@@ -151,8 +150,6 @@ export default function IdeasPage({}){
                 emptyMessage="No ideas found. Click 'New' to create one!">
                 <Column field="title" header="Title"></Column>
                 <Column field="description" header="Description"></Column>
-                <Column field="type" header="Type"></Column>
-                <Column field="application" header="Application"></Column>
                 <Column field="status" header="Status"></Column>
                 <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
             </DataTable>

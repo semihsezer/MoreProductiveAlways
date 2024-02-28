@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import {TabMenu} from 'primereact/tabmenu';
 import 'primeicons/primeicons.css';
