@@ -153,6 +153,10 @@ def get_user_ideas(request):
         # TODO
         #query = models.UserShortcut.objects.filter(user=user)
         query = models.Idea.objects
+        status = request.GET.get("status")
+        if status:
+            # TODO: assert status is one of the valid choices
+            query = query.filter(status=status)
     
         # LATER: handle pagination
         user_ideas = query.all()
@@ -168,7 +172,7 @@ def get_user_ideas(request):
         status = data.get('status')
         idea = models.Idea(user=user, title=title, description=description, application=application)
         idea.save()
-        return JsonResponse({'data': {'message': 'Idea created successfully'}}, status=201)
+        return JsonResponse({'id': idea.id}, status=200)
     elif request.method == "PUT":
         # TODO: cleanup when we switch to Django REST
         data = json.loads(request.body)
@@ -182,7 +186,7 @@ def get_user_ideas(request):
         idea.status = data.get('status')
         idea.save()
         
-        return JsonResponse({'data': {'message': 'Idea updated successfully'}}, status=200)
+        return JsonResponse({'id': idea.id}, status=200)
     elif request.method == "DELETE":
         data = json.loads(request.body)
         ids = data.get('ids')

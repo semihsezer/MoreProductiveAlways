@@ -3,11 +3,8 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { InputNumber } from 'primereact/inputnumber';
 import { classNames } from 'primereact/utils';
-import { RadioButton } from 'primereact/radiobutton';
-import { Dropdown } from 'primereact/dropdown';
-import axios from 'axios';
+import { IdeaAPI } from '../api/IdeaAPI';
 
 
 export default function IdeaCreationDialog({idea, setIdea, visible, setVisible, onSubmit, mode = "create"}) {
@@ -21,35 +18,21 @@ export default function IdeaCreationDialog({idea, setIdea, visible, setVisible, 
     };
 
     const isEditMode = mode === "edit";
-
-    function createNewIdea(){
-        if (idea.title.length > 0){
-            axios.post('/api/user/ideas', idea)
-              .then((response) => {
-                console.log(response);
-                hideDialog();
-                onSubmit();
-                // TODO: call parent callback
-            });
-        }
-    }
-
-    function updateIdea(){
-        if (idea.title.length > 0){
-            axios.put(`/api/user/ideas`, idea)
-              .then((response) => {
-                console.log(response);
-                hideDialog();
-                onSubmit();
-            }
-            );}
-    }
+    const dialogTitle = isEditMode ? "Edit Idea" : "New Idea";
+    const confirmButtonText = isEditMode ? "Save" : "Create";
 
     function onSave(){
         if (isEditMode){
-            updateIdea();
+            IdeaAPI.updateIdea(idea).then(() => {
+                hideDialog();
+                onSubmit(idea);
+            });
         } else {
-            createNewIdea();
+            IdeaAPI.createIdea(idea).then( (res) => {
+                hideDialog();
+                idea.id = res.data.id;
+                onSubmit(idea);
+            });
         }
     }
 
@@ -64,17 +47,16 @@ export default function IdeaCreationDialog({idea, setIdea, visible, setVisible, 
     const footer = (
         <React.Fragment>
             <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={onSave} />
+            <Button label={confirmButtonText} icon="pi pi-check" onClick={onSave} />
         </React.Fragment>
         )
 
     // TODO: How to return new idea? Leave it up to the parent?
         // Option 1: Get Idea from parent and update it
         // Option 2:
-    // TODO: Add application dropdown
-    // TODO: Add status dropdown
     return (
-        <Dialog visible={visible} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={footer} onHide={hideDialog}>
+        <Dialog visible={visible} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
+            header={dialogTitle} modal className="p-fluid" footer={footer} onHide={hideDialog}>
         <div className="field">
             <label htmlFor="title" className="font-bold">
                 Title
