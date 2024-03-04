@@ -1,53 +1,34 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import IdeaTable from '../components/IdeaTable';
-import {IdeaAPI} from '../api/IdeaAPI';
+import { IdeaAPI } from '../api/IdeaAPI';
 
 export default function IdeasPage({}){
     const [openIdeas, setOpenIdeas] = useState([]);
     const [closedIdeas, setClosedIdeas] = useState([]);
-    // TODO: Extract dialog and API calls out of IdeaTable
-    // TODO: display toast on delete success/failure
     // TODO: Row click should show idea detail modal
     // LATER: Option + N opens new idea dialog
 
-    function closeIdea(idea){
-        idea.status = "Closed";
-        IdeaAPI.updateIdea(idea).then( () => {
-            setClosedIdeas(closedIdeas => [idea, ...closedIdeas]);
-            let filteredArray = openIdeas.filter(item => item.id !== idea.id);
-            setOpenIdeas(filteredArray);
-            }
-        )
-    }
-
-    function createIdea(idea){
+    function onIdeaCreated(idea){
         setOpenIdeas(openIdeas => [idea, ...openIdeas]);
     }
 
-    function reopenIdea(idea){
-        idea.status = "Open";
-        IdeaAPI.updateIdea(idea).then(() => {
-            setOpenIdeas(openIdeas => [idea, ...openIdeas]);
-            let filteredArray = closedIdeas.filter(item => item.id !== idea.id);
-            setClosedIdeas(filteredArray);
-        })
+    function onIdeaClosed(idea){
+        setOpenIdeas(openIdeas => openIdeas.filter(i => i.id !== idea.id));
+        setClosedIdeas(closedIdeas => [idea, ...closedIdeas]);
     }
 
-    function deleteIdea(idea){
-        IdeaAPI.deleteIdea(idea).then(() => {
-            if (idea.status === "Open"){
-                let filteredArray = openIdeas.filter(item => item.id !== idea.id);
-                setOpenIdeas(filteredArray);
-            } else {
-                let filteredArray = closedIdeas.filter(item => item.id !== idea.id);
-                setClosedIdeas(filteredArray);
-            }
-        })
+    function onIdeaReopened(idea){
+        setClosedIdeas(closedIdeas => closedIdeas.filter(i => i.id !== idea.id));
+        setOpenIdeas(openIdeas => [idea, ...openIdeas]);
     }
 
-    function updateIdea(idea){
-        
+    function onOpenIdeaDeleted(idea){
+        setOpenIdeas(openIdeas => openIdeas.filter(i => i.id !== idea.id));
+    }
+
+    function onClosedIdeaDeleted(idea){
+        setClosedIdeas(closedIdeas => closedIdeas.filter(i => i.id !== idea.id));
     }
 
     useEffect(() => {
@@ -66,11 +47,16 @@ export default function IdeasPage({}){
 
     return (
         <div>
-            <IdeaTable ideas={openIdeas} mode="open" 
-                onIdeaClosePressed={closeIdea} onIdeaEditSubmit={updateIdea}
-                onIdeaCreateSubmit={createIdea} onIdeaDeleteSubmit={deleteIdea}></IdeaTable>
-            <IdeaTable ideas={closedIdeas} mode="closed"
-                onIdeaReopenPressed={reopenIdea} onIdeaEditSubmit={updateIdea}></IdeaTable>
+            <IdeaTable 
+                ideas={openIdeas} setIdeas={setOpenIdeas} 
+                mode="open" 
+                onIdeaCreated={onIdeaCreated} onIdeaClosed={onIdeaClosed}
+                onIdeaDeleted={onOpenIdeaDeleted} ></IdeaTable>
+            <IdeaTable 
+                ideas={closedIdeas} setIdeas={setClosedIdeas}
+                mode="closed"
+                onIdeaReopened={onIdeaReopened}
+                onIdeaDeleted={onClosedIdeaDeleted}></IdeaTable>
         </div>
     )
 }
