@@ -7,7 +7,7 @@ init:
 	python server/manage.py create_admin_user
 
 start:
-	docker-compose up -d
+	docker-compose up -d postgres
 	python server/manage.py runserver
 
 start_server:
