@@ -11,7 +11,7 @@ class ShortcutAdmin(admin.ModelAdmin):
     search_fields = ['application', 'command', 'mac', 'windows', 'linux', 'description']
 
 class UserShortcutAdmin(admin.ModelAdmin):
-    list_display = ('user', 'shortcut', 'category')
+    list_display = ('user', 'shortcut', 'status')
     search_fields = ['user', 'shortcut']
 
 class IdeaAdmin(admin.ModelAdmin):

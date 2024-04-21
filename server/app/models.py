@@ -1,25 +1,10 @@
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
-from django.contrib import admin
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-
-from six import python_2_unicode_compatible
-
-import uuid
-import pytz
-from datetime import datetime
 
 # Django models go here
 
-
-# create a new model  called "ProductivityTip" with the following fields: application, shortcut, description, created, updated
-# application - the name of the application the shortcut is for
-# shortcut - the keyboard shortcut
-# description - a description of what the shortcut does
-# created - the date and time the shortcut was created
-# updated - the date and time the shortcut was last updated
 
 class Application(models.Model):
     name = models.CharField(unique=True, max_length=200)
@@ -31,7 +16,7 @@ class Application(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-USERSHORTCUT_CATEGORY_CHOICES = [
+USER_SHORTCUT_STATUS_CHOICES = [
     ('Saved', 'Saved'),
     ('Learning', 'Learning'),
     ('Mastered', 'Mastered'),
@@ -70,7 +55,7 @@ class UserShortcut(models.Model):
     user_mac = models.CharField(max_length=200, null=True, blank=True, db_index=True)
     user_windows = models.CharField(max_length=200, null=True, blank=True, db_index=True)
     user_linux = models.CharField(max_length=200, null=True, blank=True, db_index=True)
-    category = models.CharField(max_length=200, choices=USERSHORTCUT_CATEGORY_CHOICES, default="Saved", db_index=True)
+    status = models.CharField(max_length=200, choices=USER_SHORTCUT_STATUS_CHOICES, default="Saved", db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
     

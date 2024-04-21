@@ -1,19 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 import ErrorPage from "./error-page";
-import reportWebVitals from './reportWebVitals';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import DiscoverPage from './pages/DiscoverPage';
-import ApplicationsPage from './pages/ApplicationsPage';
-import AccountPage from './pages/AccountPage';
-import UserShortcutsPage from './pages/UserShortcutsPage';
-import IdeasPage from './pages/IdeasPage';
-import history from './history'
+import reportWebVitals from "./reportWebVitals";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import DiscoverPage from "./pages/DiscoverPage";
+import ApplicationsPage from "./pages/ApplicationsPage";
+import AccountPage from "./pages/AccountPage";
+import UserShortcutsPage from "./pages/UserShortcutsPage";
+import IdeasPage from "./pages/IdeasPage";
+import history from "./history";
 
 const router = createBrowserRouter([
   {
@@ -40,14 +37,12 @@ const router = createBrowserRouter([
       {
         path: "/user/account",
         element: <AccountPage />,
-      }
-    ]
+      },
+    ],
   },
 ]);
 
-
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <RouterProvider router={router} history={history} />

@@ -73,7 +73,7 @@ def load_sample_data_from_excel(filename='sample_data.xlsx'):
             user=User.objects.get(username=row['username']),
             shortcut=shortcut,
             user_mac = row['user_mac'],
-            category = row['category'])
+            status = row['category'])
         temp_user_shortcuts.append(temp_user_shortcut)
     
     # Bulk create UserShortcut objects, ignore conflicts

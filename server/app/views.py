@@ -4,22 +4,26 @@ from django.http import JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
-from django.db import connections
-from datetime import datetime
 import json
 
-import os
-import structlog
-from collections import OrderedDict
-import requests
 
 import app.models as models
 import app.utils as utils
 from app.forms import SignUpForm
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import permissions
+from rest_framework.response import Response
+from .serializer import ApplicationSerializer, ShortcutSerializer, UserIdeaSerializer, UserShortcutSerializer
 
 
-logger = structlog.get_logger(__name__)
+class UserObjectPermissions(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj.user
+
+class UserObjectMixin:
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 def _not_found():
@@ -101,6 +105,10 @@ def health(request):
 def get_shortcuts(request):
     if request.method != 'GET':
         return HttpResponseServerError('Only GET is allowed')
+        
+    # Get shortcuts where shortcut_id exists in user_shortcuts
+    user_shortcuts = models.UserShortcut.objects.filter(user=request.user).all()
+    user_shortcut_ids = [user_shortcut.shortcut_id for user_shortcut in user_shortcuts]
     
     query = models.Shortcut.objects
     if request.GET.get('application_name'):
@@ -111,8 +119,10 @@ def get_shortcuts(request):
     if request.GET.get('description'):
         description = request.GET.get('description')
         query = query.filter(description__icontains=description)
+    
+    # Get shortcuts where shortcut_id does not exist in user_shortcuts
+    query = query.exclude(id__in=user_shortcut_ids).order_by('application__name', 'command')
    
-        
     # LATER: handle pagination
     shortcuts = query.all()
     shortcuts = utils.serialize_shortcuts(shortcuts)
@@ -123,21 +133,45 @@ def get_shortcuts(request):
 # TODO: enable login_required
 # @login_required(login_url='/accounts/login/')
 def get_user_shortcuts(request):
-    if request.method != 'GET':
-        return HttpResponseServerError('Only GET is allowed')
-    
+    # TODO: This excludes the user's shortcuts, make that explicit in the query
     user = request.user
-    # TODO
-    #query = models.UserShortcut.objects.filter(user=user)
-    query = models.UserShortcut.objects
-    if request.GET.get('application_name'):
-        application_name = request.GET.get('application_name')
-        query = query.filter(application__name=application_name)
+    if request.method == 'GET':
+        query = models.UserShortcut.objects.filter(user=user)
+        if request.GET.get('application_name'):
+            application_name = request.GET.get('application_name')
+            query = query.filter(application__name=application_name)
+        
+        # LATER: use fuzzy search
+        if request.GET.get('description'):
+            description = request.GET.get('description')
+            query = query.filter(description__icontains=description)
+
+        user_shortcuts = query.all()
+        user_shortcuts = utils.serialize_user_shortcuts(user_shortcuts)
+        return JsonResponse(user_shortcuts, safe=False)
     
-    # LATER: use fuzzy search
-    if request.GET.get('description'):
-        description = request.GET.get('description')
-        query = query.filter(description__icontains=description)
+    elif request.method == 'POST':
+        data = json.loads(request.body)
+        user_shortcut = models.UserShortcut.objects.create(
+            user=request.user,
+            shortcut_id=data['shortcut_id'],
+            status=data['status']
+        )
+        
+        return JsonResponse({'id': user_shortcut.id}, status=200)
+    elif request.method == 'PUT':
+        data = json.loads(request.body)
+        user = request.user
+        # update UserShortcut.status field in one shot
+        models.UserShortcut.objects.filter(id=data['shortcut_id'], user=user).update(status=data['status'])
+        return JsonResponse({'id': data['shortcut_id']}, status=200)
+    elif request.method == 'DELETE':
+        data = json.loads(request.body)
+        user = request.user
+        models.UserShortcut.objects.filter(id__in=data['ids'], user=user).delete()
+        return JsonResponse({'message': 'Deleted successfully.'}, status=200)
+        
+
 
 def get_applications(request):
     if request.method == 'GET':
@@ -202,3 +236,42 @@ def index(request):
     template = loader.get_template('home.html')
     return HttpResponse(template.render(context, request))
 
+
+class ApplicationViewSet(ModelViewSet):
+    queryset = models.Application.objects.all()
+    serializer_class = ApplicationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class ShortcutViewSet(ModelViewSet):
+    queryset = models.Shortcut.objects.all()
+    serializer_class = ShortcutSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class UserShortcutViewSet(ModelViewSet):
+    queryset = models.UserShortcut.objects.all()
+    serializer_class = UserShortcutSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(user=self.request.user)
+        return queryset
+
+
+class UserIdeaViewSet(ModelViewSet):
+    queryset = models.Idea.objects.all()
+    serializer_class = UserIdeaSerializer
+    permission_classes = [permissions.IsAuthenticated, UserObjectPermissions]
+    filterset_fields = ('status', )
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def put(self, request, pk=None):
+        print('hey put')
+    
+    # LEFT_HERE: Add all http methods for this viewset
+    
+    

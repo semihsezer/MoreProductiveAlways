@@ -2,6 +2,35 @@
 A web app that helps you find new productivity shortcuts for the tools you use.
 
 
+## Dev Environment
+
+### Prerequisites
+
+- Python 3.12
+
+### Getting Started
+
+1. Start a virtual environment
+   python -m venv .venv
+
+1. Activate the virtual environment
+   source .venv/bin/activate
+
+1. Install requirements
+   pip install -r server/requirements.txt
+
+1. Start the db and other services
+   make start_db
+
+1. Run migrations and create initial user
+   make init
+
+1. Start the server
+   make start_server
+    
+
+To load sample data, run: `make load_sample_data`.
+
 ## Testing
 
 Quick notes:
@@ -10,7 +39,7 @@ Quick notes:
 - Added VSCode Django Testing extension (double check if this is necessary)
 - TODO: Consider moving tests_it into the tests folder as subfolder. It would be nice if the folders are visible in test view, allowing us to separately run db tests if needed.
 
-## Smple Data:
+## Sample Data:
 
 Sample data can be loaded from Excel or JSON with this command:
 

@@ -63,7 +63,7 @@ def serialize_user_shortcut(user_shortcut):
         'user_mac': user_shortcut.user_mac,
         'user_windows': user_shortcut.user_windows,
         'user_linux': user_shortcut.user_linux,
-        'category': user_shortcut.category,
+        'status': user_shortcut.status,
         'created_at': user_shortcut.created_at,
         'updated_at': user_shortcut.updated_at,
     }
