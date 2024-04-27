@@ -13,6 +13,7 @@ from app.forms import SignUpForm
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .serializer import (
     ApplicationSerializer,
     ShortcutSerializer,
@@ -30,6 +31,12 @@ class UserObjectPermissions(permissions.BasePermission):
 class UserObjectMixin:
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class DefaultPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 def _not_found():
