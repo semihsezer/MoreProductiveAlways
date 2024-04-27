@@ -5,36 +5,35 @@ from rest_framework import routers
 
 from . import views
 
+
 class OptionalSlashDefaultRouter(routers.DefaultRouter):
-    """Make all trailing slashes optional in the URLs used by the viewsets
-    """
+    """Make all trailing slashes optional in the URLs used by the viewsets"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.trailing_slash = '/?'
+        self.trailing_slash = "/?"
 
 
 router = OptionalSlashDefaultRouter()
-router.register(r'api/user/idea', views.UserIdeaViewSet)
-router.register(r'api/user/shortcut', views.UserShortcutViewSet)
-router.register(r'api/application', views.ApplicationViewSet)
-router.register(r'api/shortcut', views.ShortcutViewSet)
+router.register(r"api/idea", views.IdeaViewSet)
+router.register(r"api/user/shortcut", views.UserShortcutViewSet)
+router.register(r"api/application", views.ApplicationViewSet)
+router.register(r"api/shortcut", views.ShortcutViewSet)
 
 urlpatterns = [
-    re_path('', include(router.urls)),
-    #path('', views.index, name='index'),
-    re_path('version', views.version, name='version'),
-    re_path(r'^health', views.health, name='health'),
-    re_path('admin/', admin.site.urls),
-    re_path('signup/$', views.signup, name='signup'),
-    re_path('accounts/login/',views.login_user, name='login_user'),
-    re_path('accounts/logout/',views.logout_user, name='logout_user'),
-
+    re_path("", include(router.urls)),
+    # path('', views.index, name='index'),
+    re_path("version", views.version, name="version"),
+    re_path(r"^health", views.health, name="health"),
+    re_path("admin/", admin.site.urls),
+    re_path("signup/$", views.signup, name="signup"),
+    re_path("accounts/login/", views.login_user, name="login_user"),
+    re_path("accounts/logout/", views.logout_user, name="logout_user"),
     # Ajax
-    re_path(r'^api/ajax/example$', views.example_ajax, name='example_ajax'),
-    #url(r'^api/shortcut$', views.get_shortcuts, name='get_shortcuts'),
-    #url(r'^api/user/shortcut$', views.get_user_shortcuts, name='get_user_shortcuts'),
-    #url(r'^api/applications$', views.get_applications, name='get_applications'),
-    #url(r'^api/user/ideas$', views.get_user_ideas, name='get_user_ideas'),
-    re_path('api-auth/', include('rest_framework.urls'))
+    re_path(r"^api/ajax/example$", views.example_ajax, name="example_ajax"),
+    # url(r'^api/shortcut$', views.get_shortcuts, name='get_shortcuts'),
+    # url(r'^api/user/shortcut$', views.get_user_shortcuts, name='get_user_shortcuts'),
+    # url(r'^api/applications$', views.get_applications, name='get_applications'),
+    # url(r'^api/user/ideas$', views.get_user_ideas, name='get_user_ideas'),
+    re_path("api-auth/", include("rest_framework.urls")),
 ]
-

@@ -6,7 +6,10 @@ A web app that helps you find new productivity shortcuts for the tools you use.
 
 ### Prerequisites
 
-- Python 3.12
+You can install these prerequisites with brew.
+
+- Python 3.12 - `brew install python@3.12`
+- pre-commit - `brew install pre-commit`
 
 ### Getting Started
 
@@ -33,7 +36,15 @@ To load sample data, run: `make load_sample_data`.
 
 ## Testing
 
-Quick notes:
+`make test`
+
+`pytest server/app/tests`
+
+Every time there is a schema change in models.py, run:
+
+`make test_recreate_db`
+
+**Quick notes:**
 - For Python tests:
 - Create remote connection into Docker container and use default python runtime there in VSCode
 - Added VSCode Django Testing extension (double check if this is necessary)

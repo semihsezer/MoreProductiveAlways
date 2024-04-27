@@ -24,3 +24,9 @@ stop:
 
 load_sample_data:
 	python server/manage.py load_sample_data --delete --source=server/app/management/scripts/sample_data.xlsx
+
+test:
+	pytest server/app/tests
+
+test_recreate_db:
+	pytest server/app/tests --create-db
