@@ -28,11 +28,13 @@ You can install these prerequisites with brew.
 1. Run migrations and create initial user
    make init
 
-1. Start the server
+1. Start the server. Go to (localhost:8000)[localhost:/8000]
    make start_server
-    
 
-To load sample data, run: `make load_sample_data`.
+1. Load sample data, run: `make load_sample_data`
+
+You can view the server at (localhost:8000)[localhost:/8000].
+You can view Django Admin and db at (localhost:8000/admin)[localhost:8000/admin]. Login with admin/Admin123.
 
 ## Testing
 
