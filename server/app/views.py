@@ -18,6 +18,7 @@ from .serializer import (
     ApplicationSerializer,
     ShortcutSerializer,
     UserIdeaSerializer,
+    UserSerializer,
     UserShortcutSerializer,
 )
 
@@ -297,3 +298,14 @@ class IdeaViewSet(ModelViewSet):
         print("hey put")
 
     # LEFT_HERE: Add all http methods for this viewset
+
+
+class UserProfileViewSet(ModelViewSet):
+    queryset = models.User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        instance = request.user
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

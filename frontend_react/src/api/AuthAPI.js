@@ -75,6 +75,7 @@ export const AuthAPI = {
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
+    window.location.href = "/discover";
   },
 };
 
