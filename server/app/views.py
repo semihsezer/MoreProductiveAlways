@@ -262,13 +262,13 @@ def index(request):
 class ApplicationViewSet(ModelViewSet):
     queryset = models.Application.objects.all()
     serializer_class = ApplicationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
 class ShortcutViewSet(ModelViewSet):
     queryset = models.Shortcut.objects.all()
     serializer_class = ShortcutSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
 class UserShortcutViewSet(ModelViewSet):

@@ -1,11 +1,9 @@
-import axios from "axios";
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+import { api } from "./AuthAPI";
 
 export const ShortcutAPI = {
   getAll: () => {
     try {
-      return axios.get(`/api/shortcut`);
+      return api.get(`/api/shortcut`);
     } catch (err) {
       console.log(err);
     }

@@ -1,14 +1,9 @@
-import axios from "axios";
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+import { AuthAPI } from "./AuthAPI";
+import authAPI from "./AuthAPI";
 
 export const UserShortcutAPI = {
-  getAll: () => {
-    try {
-      return axios.get(`/api/user/shortcut`);
-    } catch (err) {
-      console.log(err);
-    }
+  getAll: async () => {
+    return authAPI.get(`/api/user/shortcut`);
   },
 
   create: (userShortcut) => {
@@ -17,7 +12,7 @@ export const UserShortcutAPI = {
       status: userShortcut.status,
     };
     try {
-      return axios.post("/api/user/shortcut", payload);
+      return authAPI.post("/api/user/shortcut", payload);
     } catch (err) {
       console.log(err);
     }
@@ -25,7 +20,7 @@ export const UserShortcutAPI = {
 
   update: (userShortcut) => {
     try {
-      return axios.put(`/api/user/shortcut`, userShortcut);
+      return authAPI.put(`/api/user/shortcut`, userShortcut);
     } catch (err) {
       console.log(err);
     }
@@ -34,7 +29,7 @@ export const UserShortcutAPI = {
   delete: (userShortcutId) => {
     const payload = { data: { ids: [userShortcutId] } };
     try {
-      return axios.delete(`/api/user/shortcut`, payload);
+      return authAPI.delete(`/api/user/shortcut`, payload);
     } catch (err) {
       console.log(err);
     }
