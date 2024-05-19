@@ -8,6 +8,9 @@ export const UserAPI = {
       console.log(err);
     }
   },
+  isLoggedIn: () => {
+    return localStorage.getItem("token") !== null;
+  },
 };
 
 export default UserAPI;

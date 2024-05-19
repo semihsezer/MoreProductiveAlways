@@ -11,6 +11,10 @@ export default function AccountPage() {
     e.preventDefault();
     AuthAPI.logout();
   };
+  const onLoginPressed = (e) => {
+    e.preventDefault();
+    window.location.href = "/login";
+  };
 
   useEffect(() => {
     UserAPI.getProfile()
@@ -29,9 +33,16 @@ export default function AccountPage() {
           <h1>Account</h1>
           <p>Username: {userInfo.username}</p>
           <p>Email: {userInfo.email}</p>
-          <div className="flex flex-wrap gap-2">
-            <Button label="Logout" icon="pi pi-sign-out" severity="success" onClick={onLogoutPressed} />
-          </div>
+          {UserAPI.isLoggedIn() && (
+            <div className="flex flex-wrap gap-2">
+              <Button label="Logout" icon="pi pi-sign-out" severity="success" onClick={onLogoutPressed} />
+            </div>
+          )}
+          {!UserAPI.isLoggedIn() && (
+            <div className="flex flex-wrap gap-2">
+              <Button label="Login" icon="pi pi-sign-out" severity="success" onClick={onLoginPressed} />
+            </div>
+          )}
         </div>
       )}
     </>

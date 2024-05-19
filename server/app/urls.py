@@ -42,7 +42,7 @@ urlpatterns = [
     # url(r'^api/applications$', views.get_applications, name='get_applications'),
     # url(r'^api/user/ideas$', views.get_user_ideas, name='get_user_ideas'),
     re_path("api-auth/", include("rest_framework.urls")),
-    re_path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    re_path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    re_path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    re_path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
+    re_path("api/token/verify", TokenVerifyView.as_view(), name="token_verify"),
+    re_path("api/token", TokenObtainPairView.as_view(), name="token_obtain_pair"),
 ]

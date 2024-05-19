@@ -27,28 +27,9 @@ authAPI.interceptors.response.use(
     // it means the token has expired and we need to refresh it
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
-      try {
-        const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken) {
-          const response = await axios.post("/api/token/refresh", { refreshToken });
-          if (response.status === 200) {
-            const { token } = response.data;
-            localStorage.setItem("token", token);
-            // Retry the original request with the new token
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return axios(originalRequest);
-          }
-        } else {
-          console.log("No refresh token found. Redirecting to login.");
-          window.location.href = "/login";
-        }
-      } catch (error) {
-        // Handle refresh token error or redirect to login
-        console.error("Refresh token failed:", error);
-        // Redirect to login page
-        window.location.href = "/login";
-      }
+      const token = await AuthAPI.refreshToken();
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      return authAPI(originalRequest);
     }
     return Promise.reject(error);
   }
@@ -71,6 +52,26 @@ export const AuthAPI = {
       .catch((error) => {
         console.error("Login failed:", error);
       });
+  },
+  refreshToken: async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      return axios
+        .post("/api/token/refresh", {
+          refresh: refreshToken,
+        })
+        .then((res) => {
+          const token = res.data.access;
+          localStorage.setItem("token", token);
+          return token;
+        })
+        .catch((error) => {
+          console.error("Refresh token failed:", error);
+        });
+    } else {
+      console.log("No refresh token found. Redirecting to login.");
+      window.location.href = "/login";
+    }
   },
   logout: () => {
     localStorage.removeItem("token");
