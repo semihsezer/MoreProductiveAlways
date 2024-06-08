@@ -1,5 +1,6 @@
 Django==5.0.4
 djangorestframework==3.15.1
+django-allauth[google]==0.63.1
 django-crispy-forms==2.1
 django-cors-headers==4.3.1
 django-filter==24.2

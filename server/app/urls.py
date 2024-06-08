@@ -33,8 +33,9 @@ urlpatterns = [
     re_path(r"^health", views.health, name="health"),
     re_path("admin/", admin.site.urls),
     re_path("signup/$", views.signup, name="signup"),
-    re_path("accounts/login/", views.login_user, name="login_user"),
-    re_path("accounts/logout/", views.logout_user, name="logout_user"),
+    re_path("accounts/", include("allauth.urls")),
+    re_path("accounts2/login/", views.login_user, name="login_user"),
+    # re_path("accounts/logout/", views.logout_user, name="logout_user"),
     # Ajax
     re_path(r"^api/ajax/example$", views.example_ajax, name="example_ajax"),
     # url(r'^api/shortcut$', views.get_shortcuts, name='get_shortcuts'),

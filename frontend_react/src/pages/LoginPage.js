@@ -12,6 +12,17 @@ const Login = () => {
     });
   };
 
+  const constructGoogleLoginLink = () => {
+    const baseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const clientId = "676704901081-i17eo6no2dqsj3eulf2dr7v191ftmu9p.apps.googleusercontent.com";
+    const redirectUri = "http://localhost:8000/accounts/google/login/callback/";
+    const scope = "email profile";
+    const responseType = "code";
+    const state = "djDUsTQ1zAXIIfz0"; // TODO: state needs to come from the backend
+
+    return `${baseUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}&state=${state}`;
+  };
+
   return (
     <div>
       <h2>Login</h2>
@@ -25,6 +36,7 @@ const Login = () => {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         <button type="submit">Login</button>
+        <a href={constructGoogleLoginLink()}>Login with Google</a>
       </form>
     </div>
   );

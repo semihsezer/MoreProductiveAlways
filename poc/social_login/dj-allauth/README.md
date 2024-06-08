@@ -2,11 +2,13 @@
 
 - [Django AllAuth Official Documentation](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html#application-setup)
 - [DEV.to tutorial by Gajesh](https://dev.to/gajesh/the-complete-django-allauth-guide-la3)
-
+- [TestDriven Tutorial](https://testdriven.io/blog/django-rest-authjs/#backend)
+- [Headless API](https://allauth.org/docs/draft-api/) and they also have a [Demo React App](https://react.demo.allauth.org/)
+- Their React demo app and headless option seems to be the choice for React frontend
 
 1. `pip install `
 
-1. in `settings.py` `INSTALLED_APPS`:
+2. in `settings.py` `INSTALLED_APPS`:
 ```
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,5 +49,5 @@ AUTHENTICATION_BACKENDS = (
 
 1. Migrate `python manage.py makemigrations` and `python manage.py migrate`
 
-1. 
+2. 
 
