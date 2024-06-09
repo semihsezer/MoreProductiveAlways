@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 export default function AccountPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [userInfo, setUserInfo] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const onLogoutPressed = (e) => {
     e.preventDefault();
     AuthAPI.logout();
@@ -21,8 +22,12 @@ export default function AccountPage() {
       .then((res) => {
         setIsLoading(false);
         setUserInfo(res.data);
+        setIsLoggedIn(true);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setIsLoggedIn(false);
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -33,12 +38,12 @@ export default function AccountPage() {
           <h1>Account</h1>
           <p>Username: {userInfo.username}</p>
           <p>Email: {userInfo.email}</p>
-          {UserAPI.isLoggedIn() && (
+          {isLoggedIn && (
             <div className="flex flex-wrap gap-2">
               <Button label="Logout" icon="pi pi-sign-out" severity="success" onClick={onLogoutPressed} />
             </div>
           )}
-          {!UserAPI.isLoggedIn() && (
+          {!isLoggedIn && (
             <div className="flex flex-wrap gap-2">
               <Button label="Login" icon="pi pi-sign-out" severity="success" onClick={onLoginPressed} />
             </div>

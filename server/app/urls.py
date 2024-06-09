@@ -1,5 +1,6 @@
 from django.urls import include, re_path
 from django.contrib import admin
+from django.views.decorators.csrf import get_token
 
 from rest_framework import routers
 from rest_framework_simplejwt.views import (
@@ -34,7 +35,8 @@ urlpatterns = [
     re_path("admin/", admin.site.urls),
     re_path("signup/$", views.signup, name="signup"),
     re_path("accounts/", include("allauth.urls")),
-    re_path("accounts2/login/", views.login_user, name="login_user"),
+    re_path("_allauth/", include("allauth.headless.urls")),
+    # re_path("accounts2/login/", views.login_user, name="login_user"),
     # re_path("accounts/logout/", views.logout_user, name="logout_user"),
     # Ajax
     re_path(r"^api/ajax/example$", views.example_ajax, name="example_ajax"),

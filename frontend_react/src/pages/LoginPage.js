@@ -1,26 +1,44 @@
 import React, { useState } from "react";
-import { AuthAPI } from "../api/AuthAPI";
+import { AuthAPI, getCSRFToken } from "../api/AuthAPI";
 
-const Login = () => {
+const Login = (redirect_url) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    AuthAPI.getNewToken(username, password).then(() => {
-      window.location.href = "/discover";
+    AuthAPI.login(username, password).then(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const next = urlParams.get("next");
+      redirect_url = next || "/discover";
+      window.location.href = redirect_url;
     });
   };
 
-  const constructGoogleLoginLink = () => {
-    const baseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-    const clientId = "676704901081-i17eo6no2dqsj3eulf2dr7v191ftmu9p.apps.googleusercontent.com";
-    const redirectUri = "http://localhost:8000/accounts/google/login/callback/";
-    const scope = "email profile";
-    const responseType = "code";
-    const state = "djDUsTQ1zAXIIfz0"; // TODO: state needs to come from the backend
+  function postForm(action, data) {
+    const f = document.createElement("form");
+    f.method = "POST";
+    f.action = action;
 
-    return `${baseUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}&state=${state}`;
+    for (const key in data) {
+      const d = document.createElement("input");
+      d.type = "hidden";
+      d.name = key;
+      d.value = data[key];
+      f.appendChild(d);
+    }
+    document.body.appendChild(f);
+    f.submit();
+  }
+
+  const onGoogleLogin = () => {
+    const process = "login";
+    postForm("/_allauth/browser/v1/auth/provider/redirect", {
+      provider: "google",
+      callback_url: "http://localhost:3000/discover", //TODO: change to URL of site
+      process,
+      csrfmiddlewaretoken: getCSRFToken(),
+    });
   };
 
   return (
@@ -36,8 +54,8 @@ const Login = () => {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         <button type="submit">Login</button>
-        <a href={constructGoogleLoginLink()}>Login with Google</a>
       </form>
+      <button onClick={onGoogleLogin}>Google</button>
     </div>
   );
 };

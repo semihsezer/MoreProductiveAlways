@@ -5,78 +5,84 @@ axios.defaults.xsrfCookieName = "csrftoken";
 const authAPI = axios.create({});
 export const api = axios.create({});
 
-// Add a request interceptor
-authAPI.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
 // Add a response interceptor
 authAPI.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-
-    // If the error status is 401 and there is no originalRequest._retry flag,
-    // it means the token has expired and we need to refresh it
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      const token = await AuthAPI.refreshToken();
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      return authAPI(originalRequest);
+    const unauthenticatedError = "Authentication credentials were not provided.";
+    if (error.response.status === 403 && error.response.data && error.response.data.detail === unauthenticatedError) {
+      window.location.href = "/login?next=" + window.location.pathname;
     }
     return Promise.reject(error);
   }
 );
 
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+export function getCSRFToken() {
+  return getCookie("csrftoken");
+}
+
 export const AuthAPI = {
-  getNewToken: async (username, password) => {
+  logout: () => {
+    //docs.allauth.org/_allauth/{client}/v1/auth/session
     return axios
-      .post("/api/token/", {
+      .delete("/_allauth/browser/v1/auth/session")
+      .then((res) => {
+        // Django AllAuth sends 401 for successful logout - weird I know
+        console.error("Logout failed:", res);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          window.location.href = "/discover";
+        } else {
+          console.error("Logout failed:", error);
+        }
+      });
+  },
+  login: (username, password) => {
+    return axios
+      .post("/_allauth/browser/v1/auth/login", {
         username: username,
         password: password,
       })
       .then((res) => {
-        const token = res.data.access;
-        const refresh = res.data.refresh;
-        localStorage.setItem("token", token);
-        localStorage.setItem("refreshToken", refresh);
-        return token;
+        if (res.data && res.data.status === 200) {
+          return res.data;
+        } else {
+          return false;
+        }
       })
       .catch((error) => {
         console.error("Login failed:", error);
       });
   },
-  refreshToken: async () => {
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (refreshToken) {
-      return axios
-        .post("/api/token/refresh", {
-          refresh: refreshToken,
-        })
-        .then((res) => {
-          const token = res.data.access;
-          localStorage.setItem("token", token);
-          return token;
-        })
-        .catch((error) => {
-          console.error("Refresh token failed:", error);
-        });
-    } else {
-      console.log("No refresh token found. Redirecting to login.");
-      window.location.href = "/login";
-    }
-  },
-  logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    window.location.href = "/discover";
+  isAuthenticated: () => {
+    return axios
+      .get("/_allauth/browser/v1/auth/session")
+      .then((res) => {
+        if (res.data && res.data.status === 200 && res.data.meta.authenticated === true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error("Auth check failed:", error);
+      });
   },
 };
 

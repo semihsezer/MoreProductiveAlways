@@ -1,4 +1,5 @@
 import authAPI from "./AuthAPI";
+import { AuthAPI } from "./AuthAPI";
 
 export const UserAPI = {
   getProfile: () => {
@@ -9,7 +10,7 @@ export const UserAPI = {
     }
   },
   isLoggedIn: () => {
-    return localStorage.getItem("token") !== null;
+    return AuthAPI.isAuthenticated();
   },
 };
 

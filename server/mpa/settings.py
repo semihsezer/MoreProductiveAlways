@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "allauth",
     "allauth.account",
+    "allauth.headless",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "rest_framework_simplejwt",
@@ -158,6 +159,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # "rest_framework_simplejwt.authentication.JWTAuthentication",
         # TODO: SessionAuthentication can be removed in prod
+        #'rest_framework.authentication.TokenAuthentication',
         "rest_framework.authentication.SessionAuthentication",
     ),
 }
@@ -191,13 +193,13 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
 ]
 
 # Django Allauth Settings
+HEADLESS_ONLY = True
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         # For each OAuth based provider, either add a ``SocialApp``
