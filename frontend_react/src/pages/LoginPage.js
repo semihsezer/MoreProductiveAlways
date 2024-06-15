@@ -15,30 +15,16 @@ const Login = (redirect_url) => {
     });
   };
 
-  function postForm(action, data) {
-    const f = document.createElement("form");
-    f.method = "POST";
-    f.action = action;
-
-    for (const key in data) {
-      const d = document.createElement("input");
-      d.type = "hidden";
-      d.name = key;
-      d.value = data[key];
-      f.appendChild(d);
-    }
-    document.body.appendChild(f);
-    f.submit();
-  }
-
   const onGoogleLogin = () => {
-    const process = "login";
-    postForm("/_allauth/browser/v1/auth/provider/redirect", {
-      provider: "google",
-      callback_url: "http://localhost:3000/discover", //TODO: change to URL of site
-      process,
-      csrfmiddlewaretoken: getCSRFToken(),
-    });
+    // TODO: figure out which of these workflows to pick
+    // TODO: figure out how to pass next after Google login
+    // TODO: Add refresh token workflow
+    // TODO: Handle backend being down on GoogleCallback page
+    // TODO: Add spinner to GoogleCallback page
+    const urlParams = new URLSearchParams(window.location.search);
+    const next = urlParams.get("next");
+    const redirect_url = encodeURI("http://localhost:3000/social/google/callback"); // next || "/discover";
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${redirect_url}&prompt=select_account&response_type=code&client_id=676704901081-i17eo6no2dqsj3eulf2dr7v191ftmu9p.apps.googleusercontent.com&scope=openid%20email%20profile&state=${next}`;
   };
 
   return (

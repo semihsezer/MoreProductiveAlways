@@ -14,6 +14,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
 from .serializer import (
     ApplicationSerializer,
     ShortcutSerializer,
@@ -258,6 +261,14 @@ def index(request):
     context = {"test_list": test_list}
     template = loader.get_template("home.html")
     return HttpResponse(template.render(context, request))
+
+
+class GoogleLogin(
+    SocialLoginView
+):  # if you want to use Authorization Code Grant, use this
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://localhost:3000/social/google/callback"
+    client_class = OAuth2Client
 
 
 class ApplicationViewSet(ModelViewSet):

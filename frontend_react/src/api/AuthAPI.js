@@ -38,12 +38,11 @@ export function getCSRFToken() {
 
 export const AuthAPI = {
   logout: () => {
-    //docs.allauth.org/_allauth/{client}/v1/auth/session
     return axios
-      .delete("/_allauth/browser/v1/auth/session")
+      .post("/dj-rest-auth/logout/")
       .then((res) => {
-        // Django AllAuth sends 401 for successful logout - weird I know
-        console.error("Logout failed:", res);
+        console.log("Successfully logged out");
+        window.location.href = "/discover";
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
@@ -70,11 +69,14 @@ export const AuthAPI = {
         console.error("Login failed:", error);
       });
   },
+  google_callback: (code) => {
+    return axios.post("/dj-rest-auth/google/", { code: code });
+  },
   isAuthenticated: () => {
     return axios
-      .get("/_allauth/browser/v1/auth/session")
+      .get("/dj-rest-auth/user/")
       .then((res) => {
-        if (res.data && res.data.status === 200 && res.data.meta.authenticated === true) {
+        if (res.data && res.data.status === 200) {
           return true;
         } else {
           return false;

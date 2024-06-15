@@ -11,6 +11,7 @@ import AccountPage from "./pages/AccountPage";
 import UserShortcutsPage from "./pages/UserShortcutsPage";
 import IdeasPage from "./pages/IdeasPage";
 import LoginPage from "./pages/LoginPage";
+import GoogleCallback from "./components/GoogleCallback";
 import history from "./history";
 
 const router = createBrowserRouter([
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
+      },
+      {
+        path: "/social/google/callback",
+        element: <GoogleCallback />,
       },
     ],
   },

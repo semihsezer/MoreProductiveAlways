@@ -53,11 +53,14 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
     "allauth",
     "allauth.account",
-    "allauth.headless",
+    "dj_rest_auth.registration",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "allauth.usersessions",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "django_filters",
@@ -160,6 +163,7 @@ REST_FRAMEWORK = {
         # "rest_framework_simplejwt.authentication.JWTAuthentication",
         # TODO: SessionAuthentication can be removed in prod
         #'rest_framework.authentication.TokenAuthentication',
+        # "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
 }
@@ -198,8 +202,15 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
 ]
 
+# Django Rest Auth
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "jwt-auth",
+    "JWT_AUTH_REFRESH_COOKIE": "jwt-token",
+}
+
 # Django Allauth Settings
-HEADLESS_ONLY = True
+# HEADLESS_ONLY = True
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         # For each OAuth based provider, either add a ``SocialApp``
