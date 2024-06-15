@@ -9,9 +9,15 @@ export const api = axios.create({});
 authAPI.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const unauthenticatedError = "Authentication credentials were not provided.";
-    if (error.response.status === 403 && error.response.data && error.response.data.detail === unauthenticatedError) {
-      window.location.href = "/login?next=" + window.location.pathname;
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        await AuthAPI.refreshToken();
+        return authAPI(originalRequest);
+      } catch (error) {
+        window.location.href = "/login?next=" + window.location.pathname;
+      }
     }
     return Promise.reject(error);
   }
@@ -71,6 +77,9 @@ export const AuthAPI = {
   },
   google_callback: (code) => {
     return axios.post("/dj-rest-auth/google/", { code: code });
+  },
+  refreshToken: async () => {
+    return axios.post("/dj-rest-auth/token/refresh/");
   },
   isAuthenticated: () => {
     return axios
