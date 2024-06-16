@@ -14,10 +14,14 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
 from .serializer import (
     ApplicationSerializer,
     ShortcutSerializer,
     UserIdeaSerializer,
+    UserSerializer,
     UserShortcutSerializer,
 )
 
@@ -259,16 +263,24 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
+class GoogleLogin(
+    SocialLoginView
+):  # if you want to use Authorization Code Grant, use this
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://localhost:3000/social/google/callback"
+    client_class = OAuth2Client
+
+
 class ApplicationViewSet(ModelViewSet):
     queryset = models.Application.objects.all()
     serializer_class = ApplicationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
 class ShortcutViewSet(ModelViewSet):
     queryset = models.Shortcut.objects.all()
     serializer_class = ShortcutSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
 class UserShortcutViewSet(ModelViewSet):
@@ -297,3 +309,14 @@ class IdeaViewSet(ModelViewSet):
         print("hey put")
 
     # LEFT_HERE: Add all http methods for this viewset
+
+
+class UserProfileViewSet(ModelViewSet):
+    queryset = models.User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        instance = request.user
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

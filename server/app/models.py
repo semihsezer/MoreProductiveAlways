@@ -2,11 +2,19 @@ from django.db import models
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
+from shortuuid.django_fields import ShortUUIDField
 
 # Django models go here
 
 
-class TimestampedModel(models.Model):
+class BaseModel(models.Model):
+    id = ShortUUIDField(primary_key=True, editable=False)
+
+    class Meta:
+        abstract = True
+
+
+class TimestampedModel(BaseModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

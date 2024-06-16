@@ -1,4 +1,8 @@
 version: "3"
+
+volumes:
+  db-data: {}
+
 services:
   postgres:
     image: postgres:12.18
@@ -14,7 +18,7 @@ services:
     networks:
       - mpa-net
     volumes:
-      - ${REPO_ROOT}/.local/postgres:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
 
   # web:
   #   image: web

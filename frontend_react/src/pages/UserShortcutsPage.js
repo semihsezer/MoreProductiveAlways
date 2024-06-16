@@ -7,13 +7,15 @@ import UserShortcutTable from "../components/UserShortcutTable";
 
 export default function UserShortcutsPage({ msg }) {
   const [shortcuts, setShortcuts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   function callAPI() {
-    try {
-      UserShortcutAPI.getAll().then((res) => setShortcuts(res.data));
-    } catch (err) {
-      console.log(err);
-    }
+    UserShortcutAPI.getAll()
+      .then((res) => {
+        setShortcuts(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => console.log(err));
   }
 
   useEffect(() => {
@@ -22,7 +24,8 @@ export default function UserShortcutsPage({ msg }) {
 
   return (
     <>
-      <UserShortcutTable shortcuts={shortcuts} />
+      {isLoading && <p>Loading...</p>}
+      {!isLoading && <UserShortcutTable shortcuts={shortcuts} />}
     </>
   );
 }
