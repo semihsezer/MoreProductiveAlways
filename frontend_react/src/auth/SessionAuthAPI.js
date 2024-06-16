@@ -74,7 +74,7 @@ export const SessionAuthAPI = {
         console.error("Login failed:", error);
       });
   },
-  google_callback: (code) => {
+  googleCallback: (code) => {
     return axios.post("/dj-rest-auth/google/", { code: code });
   },
   refreshToken: async () => {

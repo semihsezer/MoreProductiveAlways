@@ -34,7 +34,7 @@ export const JWTAuthAPI = {
       password: password,
     });
   },
-  google_callback: (code) => {
+  googleCallback: (code) => {
     return axios.post("/dj-rest-auth/google/", { code: code }).then((res) => {
       const token = res.data.access;
       localStorage.setItem("token", token);

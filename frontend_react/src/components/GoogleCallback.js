@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getAuthAPI } from "../api/Base";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const AuthAPI = getAuthAPI();
 
@@ -17,12 +18,17 @@ const GoogleCallback = (redirect_url) => {
       redirect_url = "/discover";
     }
 
-    AuthAPI.google_callback(code).then(() => {
+    AuthAPI.googleCallback(code).then(() => {
       window.location = redirect_url;
     });
   }, []);
 
-  return <div>{isLoading && <p>We are redirecting you...</p>}</div>;
+  return (
+    <div style={{ "padding-top": "10em" }}>
+      <ProgressSpinner style={{ width: "50px", height: "50px" }} strokeWidth="8" fill="var(--surface-ground)" />
+      <p>We are redirecting you...</p>
+    </div>
+  );
 };
 
 export default GoogleCallback;
