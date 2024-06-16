@@ -34,6 +34,14 @@ export const JWTAuthAPI = {
       password: password,
     });
   },
+  signup: async (email, password1, password2) => {
+    return axios.post("/dj-rest-auth/registration/", {
+      username: email,
+      email: email,
+      password1: password1,
+      password2: password2,
+    });
+  },
   googleCallback: (code) => {
     return axios.post("/dj-rest-auth/google/", { code: code }).then((res) => {
       const token = res.data.access;

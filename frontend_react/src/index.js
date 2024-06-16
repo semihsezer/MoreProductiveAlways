@@ -11,6 +11,7 @@ import AccountPage from "./pages/AccountPage";
 import UserShortcutsPage from "./pages/UserShortcutsPage";
 import IdeasPage from "./pages/IdeasPage";
 import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 import GoogleCallback from "./components/GoogleCallback";
 import history from "./history";
 
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "/social/google/callback",
         element: <GoogleCallback />,
+      },
+      {
+        path: "/signup",
+        element: <SignupPage />,
       },
     ],
   },

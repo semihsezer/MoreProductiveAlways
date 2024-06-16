@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { getAuthAPI } from "../api/Base";
+import { onGoogleLogin } from "../auth/GoogleLogin";
 
 const AuthAPI = getAuthAPI();
 
@@ -17,19 +18,6 @@ const Login = (redirect_url) => {
     });
   };
 
-  const onGoogleLogin = () => {
-    // TODO: figure out which of these workflows to pick
-    // TODO: figure out how to pass next after Google login
-    // TODO: Add refresh token workflow
-    // TODO: Handle backend being down on GoogleCallback page
-    // TODO: Add spinner to GoogleCallback page
-    const urlParams = new URLSearchParams(window.location.search);
-    const next = urlParams.get("next");
-    // TODO: Fix URL
-    const redirect_url = encodeURI("http://localhost:3000/social/google/callback");
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${redirect_url}&prompt=select_account&response_type=code&client_id=676704901081-i17eo6no2dqsj3eulf2dr7v191ftmu9p.apps.googleusercontent.com&scope=openid%20email%20profile&state=${next}`;
-  };
-
   return (
     <div>
       <h2>Login</h2>
@@ -45,6 +33,9 @@ const Login = (redirect_url) => {
         <button type="submit">Login</button>
       </form>
       <button onClick={onGoogleLogin}>Google</button>
+      <p>
+        Don't have an account? <a href="/signup">Sign up</a>
+      </p>
     </div>
   );
 };

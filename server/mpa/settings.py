@@ -210,6 +210,11 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # TODO: make it required for production
 ACCOUNT_SIGNUP_REDIRECT_URL = "http://localhost:3000/discover"
 LOGIN_REDIRECT_URL = "http://localhost:3000/discover"
 
