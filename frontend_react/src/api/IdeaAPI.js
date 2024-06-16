@@ -1,4 +1,6 @@
-import authAPI from "./AuthAPI";
+import { getAuthAPIInstance } from "./Base";
+
+const authAPI = getAuthAPIInstance();
 
 export const IdeaAPI = {
   getIdeas: (status) => {

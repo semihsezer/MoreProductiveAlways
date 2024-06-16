@@ -1,5 +1,6 @@
-import { AuthAPI } from "./AuthAPI";
-import authAPI from "./AuthAPI";
+import { getAuthAPI, getAuthAPIInstance } from "./Base";
+
+const authAPI = getAuthAPIInstance();
 
 export const UserShortcutAPI = {
   getAll: async () => {

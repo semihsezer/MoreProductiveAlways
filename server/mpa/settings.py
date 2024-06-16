@@ -161,8 +161,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # "rest_framework_simplejwt.authentication.JWTAuthentication",
-        # TODO: SessionAuthentication can be removed in prod
-        #'rest_framework.authentication.TokenAuthentication',
+        # "rest_framework.authentication.TokenAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
         # "rest_framework.authentication.SessionAuthentication",
     ),
@@ -170,13 +169,47 @@ REST_FRAMEWORK = {
 
 # Simple JWT Settings
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
-# TODO: Check in to git
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=15),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 LOGIN_REDIRECT_URL = "/"
+
+CORS_ORIGIN_WHITELIST = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+]
+
+# Django Rest Auth
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "jwt-auth",
+    "JWT_AUTH_REFRESH_COOKIE": "jwt-refresh",
+    "JWT_AUTH_HTTPONLY": True,
+    "JWT_AUTH_COOKIE_USE_CSRF": True,
+}
+
+# Django Allauth Settings
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": os.environ["GOOGLE_AUTH_CLIENT_ID"],
+            "secret": os.environ["GOOGLE_AUTH_CLIENT_SECRET"],
+            "key": "",
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+    }
+}
+
+ACCOUNT_SIGNUP_REDIRECT_URL = "http://localhost:3000/discover"
+LOGIN_REDIRECT_URL = "http://localhost:3000/discover"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -196,38 +229,3 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-]
-
-# Django Rest Auth
-REST_AUTH = {
-    "USE_JWT": True,
-    "JWT_AUTH_COOKIE": "jwt-auth",
-    "JWT_AUTH_REFRESH_COOKIE": "jwt-refresh",
-    "JWT_AUTH_HTTPONLY": True,
-}
-
-# Django Allauth Settings
-# HEADLESS_ONLY = True
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        # For each OAuth based provider, either add a ``SocialApp``
-        # (``socialaccount`` app) containing the required client
-        # credentials, or list them here:
-        "APP": {
-            "client_id": os.environ["GOOGLE_AUTH_CLIENT_ID"],
-            "secret": os.environ["GOOGLE_AUTH_CLIENT_SECRET"],
-            "key": "",
-        },
-        "SCOPE": [
-            "profile",
-            "email",
-        ],
-    }
-}
-
-ACCOUNT_SIGNUP_REDIRECT_URL = "http://localhost:3000/discover"
-LOGIN_REDIRECT_URL = "http://localhost:3000/discover"

@@ -1,5 +1,7 @@
-import authAPI from "./AuthAPI";
-import { AuthAPI } from "./AuthAPI";
+import { getAuthAPI, getAuthAPIInstance } from "./Base";
+
+const authAPI = getAuthAPIInstance();
+const AuthAPI = getAuthAPI();
 
 export const UserAPI = {
   getProfile: () => {

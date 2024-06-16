@@ -1,4 +1,4 @@
-import { api } from "./AuthAPI";
+import { api } from "./Base";
 
 export const ShortcutAPI = {
   getAll: () => {

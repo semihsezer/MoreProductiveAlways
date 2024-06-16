@@ -1,8 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { AuthAPI } from "../api/AuthAPI";
+import { getAuthAPI } from "../api/Base";
 import UserAPI from "../api/UserAPI";
 import { Button } from "primereact/button";
+
+const AuthAPI = getAuthAPI();
 
 export default function AccountPage() {
   const [isLoading, setIsLoading] = useState(true);

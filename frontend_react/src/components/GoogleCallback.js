@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
-import { AuthAPI } from "../api/AuthAPI";
+import React, { useState, useEffect } from "react";
+import { getAuthAPI } from "../api/Base";
+
+const AuthAPI = getAuthAPI();
 
 const GoogleCallback = (redirect_url) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    // get code from the query string
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
     const state = urlParams.get("state");
@@ -19,11 +22,7 @@ const GoogleCallback = (redirect_url) => {
     });
   }, []);
 
-  return (
-    <div>
-      <h2>Google Callback</h2>
-    </div>
-  );
+  return <div>{isLoading && <p>We are redirecting you...</p>}</div>;
 };
 
 export default GoogleCallback;

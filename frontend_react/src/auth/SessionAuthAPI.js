@@ -2,19 +2,18 @@ import axios from "axios";
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-const authAPI = axios.create({});
-export const api = axios.create({});
+export const sessionAuthAPI = axios.create({});
 
 // Add a response interceptor
-authAPI.interceptors.response.use(
+sessionAuthAPI.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await AuthAPI.refreshToken();
-        return authAPI(originalRequest);
+        await SessionAuthAPI.refreshToken();
+        return sessionAuthAPI(originalRequest);
       } catch (error) {
         window.location.href = "/login?next=" + window.location.pathname;
       }
@@ -42,7 +41,7 @@ export function getCSRFToken() {
   return getCookie("csrftoken");
 }
 
-export const AuthAPI = {
+export const SessionAuthAPI = {
   logout: () => {
     return axios
       .post("/dj-rest-auth/logout/")
@@ -97,4 +96,4 @@ export const AuthAPI = {
   },
 };
 
-export default authAPI;
+export default SessionAuthAPI;
