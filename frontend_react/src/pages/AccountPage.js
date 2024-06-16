@@ -38,7 +38,6 @@ export default function AccountPage() {
       {!isLoading && (
         <div>
           <h1>Account</h1>
-          <p>Username: {userInfo.username}</p>
           <p>Email: {userInfo.email}</p>
           {isLoggedIn && (
             <div className="flex flex-wrap gap-2">
