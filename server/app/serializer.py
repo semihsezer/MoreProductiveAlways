@@ -3,9 +3,16 @@ from rest_framework.serializers import (
     PrimaryKeyRelatedField,
     CharField,
     CurrentUserDefault,
+    ValidationError,
 )
 from django.contrib.auth.models import User
-from app.models import Application, Idea, UserShortcut, Shortcut
+from app.models import Application, Idea, UserShortcut, Shortcut, UserApplication
+
+
+class UserObjectPermissionMixin:
+    def validate_user(self, user):
+        if user != self.context["request"].user:
+            raise ValidationError("You can only create this object for your user.")
 
 
 class UserSerializer(ModelSerializer):
@@ -18,6 +25,30 @@ class ApplicationSerializer(ModelSerializer):
     class Meta:
         model = Application
         fields = ("id", "name", "description", "category")
+
+
+class UserApplicationSubmitSerializer(ModelSerializer):
+    user = PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=CurrentUserDefault()
+    )
+    application = PrimaryKeyRelatedField(queryset=Application.objects.all())
+
+    class Meta:
+        model = UserApplication
+        fields = ("id", "user", "application")
+        read_only_fields = ("id",)
+
+
+class UserApplicationSerializer(ModelSerializer):
+    user = PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=CurrentUserDefault()
+    )
+    application = ApplicationSerializer()
+
+    class Meta:
+        model = UserApplication
+        fields = ("id", "user", "application")
+        read_only_fields = ("id",)
 
 
 class UserIdeaSerializer(ModelSerializer):

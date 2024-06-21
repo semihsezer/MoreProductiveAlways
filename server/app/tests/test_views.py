@@ -2,9 +2,9 @@ import pytest
 
 from django.test import TestCase, Client
 
-from app.models import Shortcut, Application, UserShortcut, Idea
+from app.models import Shortcut, Application, UserShortcut, Idea, UserApplication
 from django.contrib.auth.models import User
-from app.tests.factories import IdeaFactory
+from app.tests.factories import IdeaFactory, UserApplicationFactory, UserFactory
 
 
 @pytest.fixture
@@ -42,3 +42,23 @@ class TestIdeaViews:
 
         response = auth_client_user2.get(self.url(idea))
         assert response.status_code == 404
+
+
+@pytest.mark.django_db
+class TestUserApplicationView:
+    def url(self, user_application):
+        return f"/api/user/application/{user_application.id}"
+
+    def test_delete(self, auth_client):
+        user_application = UserApplicationFactory(user=auth_client.user)
+        res = auth_client.delete(self.url(user_application))
+
+        assert res.status_code == 204
+        assert UserApplication.objects.count() == 0
+
+    def test_delete_not_same_user(self, auth_client):
+        user_application = UserApplicationFactory(user=UserFactory())
+        res = auth_client.delete(self.url(user_application))
+
+        assert res.status_code == 403
+        assert UserApplication.objects.count() == 1

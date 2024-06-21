@@ -11,8 +11,10 @@ import app.models as models
 import app.utils as utils
 from app.forms import SignUpForm
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import CreateAPIView
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.mixins import ListModelMixin
 from rest_framework.pagination import PageNumberPagination
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
@@ -23,6 +25,8 @@ from .serializer import (
     UserIdeaSerializer,
     UserSerializer,
     UserShortcutSerializer,
+    UserApplicationSubmitSerializer,
+    UserApplicationSerializer,
 )
 
 
@@ -30,11 +34,6 @@ class UserObjectPermissions(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.user == obj.user
-
-
-class UserObjectMixin:
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 
 class DefaultPagination(PageNumberPagination):
@@ -122,139 +121,6 @@ def health(request):
     return JsonResponse(data)
 
 
-def get_shortcuts(request):
-    if request.method != "GET":
-        return HttpResponseServerError("Only GET is allowed")
-
-    # Get shortcuts where shortcut_id exists in user_shortcuts
-    user_shortcuts = models.UserShortcut.objects.filter(user=request.user).all()
-    user_shortcut_ids = [user_shortcut.shortcut_id for user_shortcut in user_shortcuts]
-
-    query = models.Shortcut.objects
-    if request.GET.get("application_name"):
-        application_name = request.GET.get("application_name")
-        query = query.filter(application__name=application_name)
-
-    # LATER: use fuzzy search
-    if request.GET.get("description"):
-        description = request.GET.get("description")
-        query = query.filter(description__icontains=description)
-
-    # Get shortcuts where shortcut_id does not exist in user_shortcuts
-    query = query.exclude(id__in=user_shortcut_ids).order_by(
-        "application__name", "command"
-    )
-
-    # LATER: handle pagination
-    shortcuts = query.all()
-    shortcuts = utils.serialize_shortcuts(shortcuts)
-    return JsonResponse(shortcuts, safe=False)
-
-
-# Write a function to get the user's shortcuts from the database
-# Login should be required to access this page
-# TODO: enable login_required
-# @login_required(login_url='/accounts/login/')
-def get_user_shortcuts(request):
-    # TODO: This excludes the user's shortcuts, make that explicit in the query
-    user = request.user
-    if request.method == "GET":
-        query = models.UserShortcut.objects.filter(user=user)
-        if request.GET.get("application_name"):
-            application_name = request.GET.get("application_name")
-            query = query.filter(application__name=application_name)
-
-        # LATER: use fuzzy search
-        if request.GET.get("description"):
-            description = request.GET.get("description")
-            query = query.filter(description__icontains=description)
-
-        user_shortcuts = query.all()
-        user_shortcuts = utils.serialize_user_shortcuts(user_shortcuts)
-        return JsonResponse(user_shortcuts, safe=False)
-
-    elif request.method == "POST":
-        data = json.loads(request.body)
-        user_shortcut = models.UserShortcut.objects.create(
-            user=request.user, shortcut_id=data["shortcut_id"], status=data["status"]
-        )
-
-        return JsonResponse({"id": user_shortcut.id}, status=200)
-    elif request.method == "PUT":
-        data = json.loads(request.body)
-        user = request.user
-        # update UserShortcut.status field in one shot
-        models.UserShortcut.objects.filter(id=data["shortcut_id"], user=user).update(
-            status=data["status"]
-        )
-        return JsonResponse({"id": data["shortcut_id"]}, status=200)
-    elif request.method == "DELETE":
-        data = json.loads(request.body)
-        user = request.user
-        models.UserShortcut.objects.filter(id__in=data["ids"], user=user).delete()
-        return JsonResponse({"message": "Deleted successfully."}, status=200)
-
-
-def get_applications(request):
-    if request.method == "GET":
-        applications = models.Application.objects.all()
-        applications = utils.serialize_applications(applications)
-        return JsonResponse(applications, safe=False)
-    else:
-        return HttpResponseServerError("Only GET is allowed")
-
-
-def get_user_ideas(request):
-    if request.method == "GET":
-        user = request.user
-        # TODO
-        # query = models.UserShortcut.objects.filter(user=user)
-        query = models.Idea.objects
-        status = request.GET.get("status")
-        if status:
-            # TODO: assert status is one of the valid choices
-            query = query.filter(status=status)
-
-        # LATER: handle pagination
-        user_ideas = query.all()
-        user_ideas = utils.serialize_user_ideas(user_ideas)
-        return JsonResponse(user_ideas, safe=False)
-    elif request.method == "POST":
-        data = json.loads(request.body)
-        user = request.user
-        title = data.get("title")
-        description = data.get("description")
-        application = data.get("application")
-        type = data.get("type")
-        status = data.get("status")
-        idea = models.Idea(
-            user=user, title=title, description=description, application=application
-        )
-        idea.save()
-        return JsonResponse({"id": idea.id}, status=200)
-    elif request.method == "PUT":
-        # TODO: cleanup when we switch to Django REST
-        data = json.loads(request.body)
-        id = data.get("id")
-        idea = models.Idea.objects.get(id=id)
-
-        idea.title = data.get("title")
-        idea.description = data.get("description")
-        idea.application = data.get("application")
-        idea.type = data.get("type")
-        idea.status = data.get("status")
-        idea.save()
-
-        return JsonResponse({"id": idea.id}, status=200)
-    elif request.method == "DELETE":
-        data = json.loads(request.body)
-        ids = data.get("ids")
-        models.Idea.objects.filter(id__in=ids).delete()
-        return JsonResponse({"message": "Ideas were deleted successfully."}, status=200)
-    else:
-        return HttpResponseServerError("Only GET and POST are allowed")
-
-
 @login_required(login_url="/accounts/login/")
 def index(request):
     test_list = ["test1", "test2"]
@@ -263,10 +129,9 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-class GoogleLogin(
-    SocialLoginView
-):  # if you want to use Authorization Code Grant, use this
+class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
+    # TODO: URL needs to be updated
     callback_url = "http://localhost:3000/social/google/callback"
     client_class = OAuth2Client
 
@@ -275,6 +140,44 @@ class ApplicationViewSet(ModelViewSet):
     queryset = models.Application.objects.all()
     serializer_class = ApplicationSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class UserApplicationViewSet(ModelViewSet, ListModelMixin):
+    queryset = models.UserApplication.objects.all()
+    serializer_class = UserApplicationSerializer
+    permission_classes = [permissions.IsAuthenticated, UserObjectPermissions]
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method == "DELETE" or self.request.method == "POST":
+            return UserApplicationSubmitSerializer
+        return self.serializer_class
+
+    def list(self, request, *args, **kwargs):
+        applications = []
+        if request.GET["status"]:
+            user_applications = list(self.queryset.filter(user=request.user).all())
+            user_application_ids = [ua.application.id for ua in user_applications]
+            non_user_applications = models.Application.objects.exclude(
+                id__in=user_application_ids
+            )
+            non_user_applications = [
+                models.UserApplication(application=app) for app in non_user_applications
+            ]
+
+            if request.GET["status"] == "all":
+                applications = user_applications + non_user_applications
+            elif request.GET["status"] == "unsaved":
+                applications = non_user_applications
+            else:
+                raise ValueError("Invalid status, must be 'all' or 'unsaved'")
+
+        serializer = self.get_serializer(applications, many=True)
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return super().destroy(request, *args, **kwargs)
 
 
 class ShortcutViewSet(ModelViewSet):
@@ -307,8 +210,6 @@ class IdeaViewSet(ModelViewSet):
 
     def put(self, request, pk=None):
         print("hey put")
-
-    # LEFT_HERE: Add all http methods for this viewset
 
 
 class UserProfileViewSet(ModelViewSet):

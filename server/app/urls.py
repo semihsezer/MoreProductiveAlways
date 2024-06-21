@@ -24,6 +24,9 @@ router = OptionalSlashDefaultRouter()
 router.register(r"api/idea", views.IdeaViewSet)
 router.register(r"api/user/shortcut", views.UserShortcutViewSet)
 router.register(r"api/application", views.ApplicationViewSet)
+router.register(
+    r"api/user/application", views.UserApplicationViewSet, "user-application"
+)
 router.register(r"api/shortcut", views.ShortcutViewSet)
 router.register(r"api/user/profile", views.UserProfileViewSet)
 

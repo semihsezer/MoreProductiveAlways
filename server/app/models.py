@@ -39,6 +39,9 @@ class UserApplication(TimestampedModel):
         Application, on_delete=models.CASCADE, db_index=True
     )
 
+    class Meta:
+        unique_together = ("user", "application")
+
 
 USER_SHORTCUT_STATUS_CHOICES = [
     ("Saved", "Saved"),

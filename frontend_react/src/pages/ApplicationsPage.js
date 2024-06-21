@@ -1,5 +1,6 @@
 import React from "react";
 import { DataScroller } from "primereact/datascroller";
+import { UserApplicationAPI } from "../api/UserApplicationAPI";
 import ApplicationCard from "../components/ApplicationCard";
 import { useState, useEffect } from "react";
 
@@ -8,9 +9,8 @@ export default function ApplicationsPage({}) {
 
   function getApplications() {
     try {
-      fetch(`/api/application`)
-        .then((res) => res.json())
-        .then((data) => setApplications(data))
+      UserApplicationAPI.getAll("all")
+        .then((res) => setApplications(res.data))
         .catch((err) => console.log(err));
     } catch (err) {
       console.log(err);
@@ -22,7 +22,7 @@ export default function ApplicationsPage({}) {
   }, []);
 
   const itemTemplate = (application) => {
-    return <ApplicationCard application={application} />;
+    return <ApplicationCard userApplication={application} />;
   };
 
   return (
