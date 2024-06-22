@@ -2,15 +2,15 @@
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { useEffect, useState } from "react";
 
-import { ShortcutAPI } from "../api/ShortcutAPI";
-import ShortcutTable from "../components/ShortcutTable";
+import { UserShortcutAPI } from "../api/UserShortcutAPI";
+import UserShortcutTable from "../components/UserShortcutTable";
 
 export default function DiscoverPage({ msg }) {
   const [shortcuts, setShortcuts] = useState([]);
 
   useEffect(() => {
     try {
-      ShortcutAPI.getAll().then((res) => setShortcuts(res.data));
+      UserShortcutAPI.discover().then((res) => setShortcuts(res.data));
     } catch (err) {
       console.log(err);
     }
@@ -20,7 +20,7 @@ export default function DiscoverPage({ msg }) {
     <>
       <p>Discover</p>
       <div style={{ padding: "25px" }}>
-        <ShortcutTable shortcuts={shortcuts} />
+        <UserShortcutTable shortcuts={shortcuts} />
       </div>
     </>
   );

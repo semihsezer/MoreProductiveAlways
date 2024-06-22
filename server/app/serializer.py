@@ -52,14 +52,16 @@ class UserApplicationSerializer(ModelSerializer):
 
 
 class UserIdeaSerializer(ModelSerializer):
-    username = CharField(source="user.username", read_only=True)
+    user = PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=CurrentUserDefault()
+    )
 
     class Meta:
         model = Idea
         fields = (
             "id",
             "title",
-            "username",
+            "user",
             "application",
             "description",
             "type",
@@ -85,23 +87,45 @@ class ShortcutSerializer(ModelSerializer):
             "application_command",
             "description",
         )
+        read_only_fields = ("id",)
 
 
 class UserShortcutSerializer(ModelSerializer):
-    username = CharField(source="user.username")
+    user = PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=CurrentUserDefault()
+    )
     shortcut = ShortcutSerializer(read_only=True)
 
     class Meta:
         model = UserShortcut
         fields = (
             "id",
-            "username",
+            "user",
             "shortcut",
             "user_mac",
             "user_windows",
             "user_linux",
             "status",
         )
+        read_only_fields = ("id",)
+
+
+class UserShortcutSubmitSerializer(ModelSerializer):
+    user = PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=CurrentUserDefault()
+    )
+    shortcut_id = PrimaryKeyRelatedField(
+        queryset=Shortcut.objects.all(), source="shortcut", write_only=True
+    )
+
+    class Meta:
+        model = UserShortcut
+        fields = (
+            "id",
+            "user",
+            "shortcut_id",
+        )
+        read_only_fields = ("id", "shortcut_id")
 
 
 class UserSerializer(ModelSerializer):

@@ -11,9 +11,6 @@ export const UserAPI = {
       console.log(err);
     }
   },
-  isLoggedIn: () => {
-    return AuthAPI.isAuthenticated();
-  },
 };
 
 export default UserAPI;

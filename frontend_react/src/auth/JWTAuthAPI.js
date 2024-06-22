@@ -45,7 +45,6 @@ export const JWTAuthAPI = {
   googleCallback: (code) => {
     return axios.post("/dj-rest-auth/google/", { code: code }).then((res) => {
       const token = res.data.access;
-      localStorage.setItem("token", token);
     });
   },
   refreshToken: async () => {
@@ -53,7 +52,6 @@ export const JWTAuthAPI = {
       .post("/dj-rest-auth/token/refresh/", {}, { withCredentials: true })
       .then((res) => {
         const token = res.data.access;
-        localStorage.setItem("token", token);
         return token;
       })
       .catch((error) => {
@@ -65,7 +63,6 @@ export const JWTAuthAPI = {
     // TODO: handle if refresh expired
     return jwtAuthAPI.post("/dj-rest-auth/logout/").then((res) => {
       console.log("Successfully logged out");
-      localStorage.removeItem("token");
       window.location.href = "/discover";
     });
   },

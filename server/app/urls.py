@@ -29,6 +29,9 @@ router.register(
 )
 router.register(r"api/shortcut", views.ShortcutViewSet)
 router.register(r"api/user/profile", views.UserProfileViewSet)
+router.register(
+    r"api/discover/shortcut", views.DiscoverShortcutViewSet, "discover-shortcut"
+)
 
 urlpatterns = [
     re_path("", include(router.urls)),

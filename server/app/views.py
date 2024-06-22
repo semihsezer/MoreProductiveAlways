@@ -14,17 +14,20 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import CreateAPIView
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.mixins import ListModelMixin
+from rest_framework.mixins import ListModelMixin, UpdateModelMixin
 from rest_framework.pagination import PageNumberPagination
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
+from rest_framework.decorators import action
+from rest_framework.viewsets import GenericViewSet
 from .serializer import (
     ApplicationSerializer,
     ShortcutSerializer,
     UserIdeaSerializer,
     UserSerializer,
     UserShortcutSerializer,
+    UserShortcutSubmitSerializer,
     UserApplicationSubmitSerializer,
     UserApplicationSerializer,
 )
@@ -164,6 +167,7 @@ class UserApplicationViewSet(ModelViewSet, ListModelMixin):
                 models.UserApplication(application=app) for app in non_user_applications
             ]
 
+            # TODO: Use filterclass for these?
             if request.GET["status"] == "all":
                 applications = user_applications + non_user_applications
             elif request.GET["status"] == "unsaved":
@@ -186,14 +190,50 @@ class ShortcutViewSet(ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 
-class UserShortcutViewSet(ModelViewSet):
+class UserShortcutViewSet(ModelViewSet, ListModelMixin):
     queryset = models.UserShortcut.objects.all()
     serializer_class = UserShortcutSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, UserObjectPermissions]
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method == "DELETE" or self.request.method == "POST":
+            return UserShortcutSubmitSerializer
+        return self.serializer_class
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(user=self.request.user)
         return queryset
+
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+
+class DiscoverShortcutViewSet(GenericViewSet, ListModelMixin):
+    queryset = models.UserShortcut.objects.all()
+    serializer_class = UserShortcutSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def list(self, request):
+        shortcuts = []
+        if request.user and request.user.is_authenticated:
+            qs = self.queryset.filter(user=request.user)
+            user_shortcut_ids = [qs.values_list("shortcut_id", flat=True)]
+            non_user_shortcuts = models.Shortcut.objects.exclude(
+                id__in=user_shortcut_ids
+            )
+            shortcuts = [
+                models.UserShortcut(shortcut=shortcut, status=None)
+                for shortcut in non_user_shortcuts
+            ]
+        else:
+            all_shortcuts = models.Shortcut.objects.all()
+            shortcuts = [
+                models.UserShortcut(shortcut=shortcut, status=None)
+                for shortcut in all_shortcuts
+            ]
+
+        serializer = UserShortcutSerializer(shortcuts, many=True)
+        return Response(serializer.data)
 
 
 class IdeaViewSet(ModelViewSet):

@@ -1,4 +1,4 @@
-import { getAuthAPI, getAuthAPIInstance } from "./Base";
+import { getAuthAPIInstance } from "./Base";
 
 const authAPI = getAuthAPIInstance();
 
@@ -19,18 +19,25 @@ export const UserShortcutAPI = {
     }
   },
 
-  update: (userShortcut) => {
+  patch: (userShortcutId, payload) => {
     try {
-      return authAPI.put(`/api/user/shortcut`, userShortcut);
+      return authAPI.patch(`/api/user/shortcut/${userShortcutId}`, payload);
     } catch (err) {
       console.log(err);
     }
   },
 
   delete: (userShortcutId) => {
-    const payload = { data: { ids: [userShortcutId] } };
     try {
-      return authAPI.delete(`/api/user/shortcut`, payload);
+      return authAPI.delete(`/api/user/shortcut/${userShortcutId}`);
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  discover: () => {
+    try {
+      return authAPI.get(`/api/discover/shortcut`);
     } catch (err) {
       console.log(err);
     }

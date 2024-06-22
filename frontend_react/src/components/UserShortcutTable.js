@@ -17,16 +17,18 @@ export default function UserShortcutTable({ shortcuts }) {
     description: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
 
-  const onStatusChange = (oldStatus, newStatus, shortcut) => {
+  const onStatusChange = (oldStatus, newStatus, userShortcut) => {
     if (oldStatus === newStatus) return;
     else if (oldStatus == null) {
-      const userShortcut = { shortcut_id: shortcut.id, status: newStatus };
-      UserShortcutAPI.create(userShortcut);
+      const newUserShortcut = { shortcut_id: userShortcut.shortcut.id, status: newStatus };
+      UserShortcutAPI.create(newUserShortcut).then((res) => {
+        userShortcut.id = res.data.id;
+      });
     } else if (newStatus !== null) {
-      const userShortcut = { shortcut_id: shortcut.id, status: newStatus };
-      UserShortcutAPI.update(userShortcut);
+      const payload = { shortcut_id: userShortcut.shortcut.id, status: newStatus };
+      UserShortcutAPI.patch(userShortcut.id, payload);
     } else {
-      UserShortcutAPI.delete(shortcut.id);
+      UserShortcutAPI.delete(userShortcut.id);
     }
   };
 
