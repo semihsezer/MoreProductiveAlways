@@ -120,11 +120,7 @@ class UserShortcutSubmitSerializer(ModelSerializer):
 
     class Meta:
         model = UserShortcut
-        fields = (
-            "id",
-            "user",
-            "shortcut_id",
-        )
+        fields = ("id", "user", "shortcut_id", "status")
         read_only_fields = ("id", "shortcut_id")
 
 

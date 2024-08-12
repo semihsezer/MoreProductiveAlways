@@ -1,7 +1,8 @@
+// old code
 import "./App.css";
 import { TabMenu } from "primereact/tabmenu";
 import "primeicons/primeicons.css";
-import { useLocation, useNavigate, Outlet, Link } from "react-router-dom";
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import { useState } from "react";
 
 function App() {
@@ -9,7 +10,7 @@ function App() {
   const location = useLocation();
 
   // set activeIndex given the path
-  var initialActiveIndex = 0;
+  let initialActiveIndex = 0;
   if (location.pathname === "/discover") initialActiveIndex = 0;
   else if (location.pathname === "/user/shortcuts") initialActiveIndex = 1;
   else if (location.pathname === "/user/applications") initialActiveIndex = 2;
@@ -62,7 +63,6 @@ function App() {
   ];
 
   // get url of the page with react
-
   return (
     <div className="App">
       <div className="card">
