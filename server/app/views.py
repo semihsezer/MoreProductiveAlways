@@ -227,6 +227,7 @@ class UserShortcutViewSet(ModelViewSet, ListModelMixin):
     queryset = models.UserShortcut.objects.all()
     serializer_class = UserShortcutSerializer
     permission_classes = [permissions.IsAuthenticated, UserObjectPermissions]
+    filterset_fields = ("status",)
 
     def get_serializer_class(self, *args, **kwargs):
         if self.request.method == "DELETE" or self.request.method == "POST":

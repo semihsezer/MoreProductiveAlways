@@ -56,53 +56,48 @@ export default function UserShortcutsPage({ msg }) {
     return tabNotesMapping[tabName].noData;
   }
 
-  const filterShortcuts = function (status) {
-    setShortcuts(allShortcuts.filter((shortcut) => shortcut.status === status));
-  };
-
   const items = [
     {
       label: "Learning",
       icon: "pi pi-chart-line",
       command: () => {
-        filterShortcuts("Learning");
+        getShortcuts("Learning");
       },
     },
     {
       label: "Saved",
       icon: "pi pi-list",
       command: () => {
-        filterShortcuts("Saved");
+        getShortcuts("Saved");
       },
     },
     {
       label: "Mastered",
       icon: "pi pi-check",
       command: () => {
-        filterShortcuts("Mastered");
+        getShortcuts("Mastered");
       },
     },
     {
       label: "Not Relevant",
       icon: "pi pi-times-circle",
       command: () => {
-        filterShortcuts("Not Relevant");
+        getShortcuts("Not Relevant");
       },
     },
   ];
 
-  function callAPI() {
-    UserShortcutAPI.getAll()
+  function getShortcuts(status) {
+    UserShortcutAPI.getAll(status)
       .then((res) => {
-        setAllShortcuts(res.data);
-        filterShortcuts("Learning");
+        setShortcuts(res.data);
         setIsLoading(false);
       })
       .catch((err) => console.log(err));
   }
 
   useEffect(() => {
-    callAPI();
+    getShortcuts("Learning");
   }, []);
 
   return (
