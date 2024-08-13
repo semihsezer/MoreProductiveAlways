@@ -6,15 +6,16 @@ import React, { useState } from "react";
 import { UserShortcutAPI } from "../api/UserShortcutAPI";
 import ShortcutStatusDropdown from "./ShortcutStatusDropdown";
 
-export default function UserShortcutTable({ shortcuts }) {
+export default function UserShortcutTable({ shortcuts, defaultStatusFilter }) {
   // TODO: Add delete button to remove user shortcut from the table
   // TODO: Fix top status dropdown to filter by status
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    "application.name": { value: null, matchMode: FilterMatchMode.CONTAINS },
-    command: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    mac: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    description: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    "shortcut.application.name": { value: null, matchMode: FilterMatchMode.CONTAINS },
+    "shortcut.command": { value: null, matchMode: FilterMatchMode.CONTAINS },
+    "shortcut.mac": { value: null, matchMode: FilterMatchMode.CONTAINS },
+    "shortcut.description": { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
   });
 
   const onStatusChange = (oldStatus, newStatus, userShortcut) => {
@@ -24,7 +25,7 @@ export default function UserShortcutTable({ shortcuts }) {
       UserShortcutAPI.create(newUserShortcut).then((res) => {
         userShortcut.id = res.data.id;
       });
-    } else if (newStatus !== null) {
+    } else if (newStatus !== "New") {
       const payload = { shortcut_id: userShortcut.shortcut.id, status: newStatus };
       UserShortcutAPI.patch(userShortcut.id, payload);
     } else {
@@ -43,14 +44,15 @@ export default function UserShortcutTable({ shortcuts }) {
   const statusRowFilterTemplate = (options) => {
     return (
       <ShortcutStatusDropdown
-        status="Saved"
-        onChange={(oldValue, newValue, shortcut) => options.filterApplyCallback(newValue)}
+        status={defaultStatusFilter}
+        onChange={(oldValue, newValue, shortcut) => {
+          options.filterApplyCallback(newValue);
+        }}
       />
     );
   };
 
   return (
-    // TODO: Make sure all fields are mapped correctly and intuitively
     <div className="card">
       <DataTable
         value={shortcuts}
@@ -74,6 +76,7 @@ export default function UserShortcutTable({ shortcuts }) {
           filterPlaceholder="Search by description"
         ></Column>
         <Column
+          field="status"
           header="Status"
           body={actionBodyTemplate}
           exportable={false}

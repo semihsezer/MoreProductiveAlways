@@ -25,7 +25,7 @@ export default function UserShortcutsPage({ msg }) {
   return (
     <>
       {isLoading && <p>Loading...</p>}
-      {!isLoading && <UserShortcutTable shortcuts={shortcuts} />}
+      {!isLoading && <UserShortcutTable shortcuts={shortcuts} defaultStatusFilter="Saved" />}
     </>
   );
 }

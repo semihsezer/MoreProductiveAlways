@@ -18,7 +18,7 @@ export default function DiscoverPage({ msg }) {
   return (
     <>
       <div>
-        <UserShortcutTable shortcuts={shortcuts} />
+        <UserShortcutTable shortcuts={shortcuts} defaultStatusFilter="New" />
       </div>
     </>
   );
