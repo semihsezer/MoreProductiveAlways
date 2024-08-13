@@ -5,6 +5,7 @@ import React, { useState } from "react";
 
 import { UserShortcutAPI } from "../api/UserShortcutAPI";
 import ShortcutStatusDropdown from "./ShortcutStatusDropdown";
+import ShortcutStatusFilterDropdown from "./ShortcutStatusFilterDropdown";
 
 export default function UserShortcutTable({ shortcuts, defaultStatusFilter }) {
   // TODO: Add delete button to remove user shortcut from the table
@@ -43,9 +44,8 @@ export default function UserShortcutTable({ shortcuts, defaultStatusFilter }) {
 
   const statusRowFilterTemplate = (options) => {
     return (
-      <ShortcutStatusDropdown
-        status={defaultStatusFilter}
-        onChange={(oldValue, newValue, shortcut) => {
+      <ShortcutStatusFilterDropdown
+        onChange={(oldValue, newValue) => {
           options.filterApplyCallback(newValue);
         }}
       />
@@ -64,15 +64,29 @@ export default function UserShortcutTable({ shortcuts, defaultStatusFilter }) {
         <Column
           field="shortcut.application.name"
           filter
+          showFilterMenu={false}
           filterPlaceholder="Filter application"
           header="Application"
         ></Column>
-        <Column field="shortcut.command" filter filterPlaceholder="Search by command" header="Command"></Column>
-        <Column field="shortcut.mac" header="Shortcut (Mac)" filter filterPlaceholder="Filter shortcut"></Column>
+        <Column
+          field="shortcut.command"
+          filter
+          showFilterMenu={false}
+          filterPlaceholder="Search by command"
+          header="Command"
+        ></Column>
+        <Column
+          field="shortcut.mac"
+          header="Shortcut (Mac)"
+          filter
+          showFilterMenu={false}
+          filterPlaceholder="Filter shortcut"
+        ></Column>
         <Column
           field="shortcut.description"
           header="Description"
           filter
+          showFilterMenu={false}
           filterPlaceholder="Search by description"
         ></Column>
         <Column
@@ -82,6 +96,7 @@ export default function UserShortcutTable({ shortcuts, defaultStatusFilter }) {
           exportable={false}
           style={{ minWidth: "12rem" }}
           filter
+          showFilterMenu={false}
           filterElement={statusRowFilterTemplate}
         ></Column>
       </DataTable>
