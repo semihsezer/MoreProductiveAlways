@@ -4,7 +4,10 @@ from django.http import JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-import json
+
+import jwt
+from allauth.socialaccount.providers.oauth2.client import OAuth2Error
+import time
 
 
 import app.models as models
@@ -132,8 +135,38 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
+class GoogleOAuth2IatValidationAdapter(GoogleOAuth2Adapter):
+    """This adapter is only needed to wait for a small delta time because
+    the returned 'iat' time is sometimes in the future. Hopefully this will
+    be fixed in upcoming updates.
+
+    https://github.com/iMerica/dj-rest-auth/issues/503
+    """
+
+    def complete_login(self, request, app, token, response, **kwargs):
+        try:
+            delta_time = (
+                jwt.decode(
+                    response.get("id_token"),
+                    options={"verify_signature": False},
+                    algorithms=["RS256"],
+                )["iat"]
+                - time.time()
+            )
+        except jwt.PyJWTError as e:
+            raise OAuth2Error("Invalid id_token during 'iat' validation") from e
+        except KeyError as e:
+            raise OAuth2Error("Failed to get 'iat' from id_token") from e
+
+        # Or change 30 to whatever you feel is a maximum amount of time you are willing to wait
+        if delta_time > 0 and delta_time <= 30:
+            time.sleep(delta_time)
+
+        return super().complete_login(request, app, token, response, **kwargs)
+
+
 class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
+    adapter_class = GoogleOAuth2IatValidationAdapter
     # TODO: URL needs to be updated
     callback_url = "http://localhost:3000/social/google/callback"
     client_class = OAuth2Client
