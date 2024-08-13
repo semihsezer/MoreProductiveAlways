@@ -1,5 +1,4 @@
 "use client";
-import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { useEffect, useState } from "react";
 
 import { UserShortcutAPI } from "../api/UserShortcutAPI";
@@ -18,8 +17,7 @@ export default function DiscoverPage({ msg }) {
 
   return (
     <>
-      <p>Discover</p>
-      <div style={{ padding: "25px" }}>
+      <div>
         <UserShortcutTable shortcuts={shortcuts} />
       </div>
     </>

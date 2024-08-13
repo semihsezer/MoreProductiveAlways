@@ -7,5 +7,9 @@
     "python.testing.autoTestDiscoverOnSaveEnabled": false,
     "search.exclude": {
         "**/.venv": true
-    }
+    },
+    "cSpell.words": [
+        "primeflex",
+        "primeicons"
+    ]
 }

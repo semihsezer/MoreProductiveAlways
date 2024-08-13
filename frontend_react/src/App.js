@@ -68,7 +68,9 @@ function App() {
       <div className="card">
         <TabMenu model={items} activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} />
       </div>
-      <Outlet />
+      <div style={{ padding: "25px" }}>
+        <Outlet />
+      </div>
     </div>
   );
 }
