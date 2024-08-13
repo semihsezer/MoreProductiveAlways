@@ -3,8 +3,12 @@ import { getAuthAPIInstance } from "./Base";
 const authAPI = getAuthAPIInstance();
 
 export const UserShortcutAPI = {
-  getAll: async () => {
-    return authAPI.get(`/api/user/shortcut`);
+  getAll: async (status) => {
+    if (status) {
+      return authAPI.get(`/api/user/shortcut?status=${status}`);
+    } else {
+      return authAPI.get(`/api/user/shortcut`);
+    }
   },
 
   create: (userShortcut) => {
