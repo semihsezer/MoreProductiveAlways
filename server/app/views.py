@@ -28,6 +28,8 @@ from .serializer import (
     ApplicationSerializer,
     ShortcutSerializer,
     UserIdeaSerializer,
+    UserPreferenceSerializer,
+    UserPreferenceSubmitSerializer,
     UserSerializer,
     UserShortcutSerializer,
     UserShortcutSubmitSerializer,
@@ -295,3 +297,20 @@ class UserProfileViewSet(ModelViewSet):
         instance = request.user
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class UserPreferenceViewSet(ModelViewSet):
+    queryset = models.UserPreference.objects.all()
+    serializer_class = UserPreferenceSerializer
+    permission_classes = [permissions.IsAuthenticated, UserObjectPermissions]
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method in ["PATCH", "PUT"]:
+            return UserPreferenceSubmitSerializer(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        user_preference, _ = models.UserPreference.objects.get_or_create(
+            user=request.user
+        )
+        return Response(UserPreferenceSerializer(user_preference).data)

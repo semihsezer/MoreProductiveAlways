@@ -6,8 +6,7 @@ export default function ShortcutStatusDropdown({ status, onChange, shortcut }) {
   const [currentStatus, setCurrentStatus] = useState(status);
   const [selectedStatus, setSelectedStatus] = useState(status);
 
-  function onStatusChange(e) {
-    const newValue = e.value;
+  function onStatusChange(newValue) {
     setSelectedStatus(newValue);
     onChange(currentStatus, newValue, shortcut);
     setCurrentStatus(newValue);
@@ -19,7 +18,7 @@ export default function ShortcutStatusDropdown({ status, onChange, shortcut }) {
     <div className="card flex justify-content-center">
       <Dropdown
         value={selectedStatus}
-        onChange={(e) => onStatusChange(e)}
+        onChange={(e) => onStatusChange(e.value)}
         options={statuses}
         optionLabel="name"
         placeholder="New"

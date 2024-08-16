@@ -4,9 +4,19 @@ from rest_framework.serializers import (
     CharField,
     CurrentUserDefault,
     ValidationError,
+    SerializerMethodField,
 )
 from django.contrib.auth.models import User
-from app.models import Application, Idea, UserShortcut, Shortcut, UserApplication
+from app.models import (
+    Application,
+    Idea,
+    UserPreference,
+    UserShortcut,
+    Shortcut,
+    UserApplication,
+)
+from app.enums import OperatingSystem, ApplicationCategory
+from app.utils import django_text_choices_to_dict_list
 
 
 class UserObjectPermissionMixin:
@@ -128,3 +138,41 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ("username", "email", "id")
+
+
+class UserPreferenceSubmitSerializer(ModelSerializer):
+    user = PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=CurrentUserDefault()
+    )
+
+    class Meta:
+        model = UserPreference
+        fields = ("id", "user", "operating_system", "application_categories")
+        read_only_fields = ("id", "user")
+
+
+class UserPreferenceSerializer(ModelSerializer):
+    user = PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=CurrentUserDefault()
+    )
+    operating_system = SerializerMethodField()
+    application_categories = SerializerMethodField()
+
+    def get_operating_system(self, obj):
+        return {
+            "value": obj.operating_system,
+            "label": "Operating System",
+            "choices": django_text_choices_to_dict_list(OperatingSystem),
+        }
+
+    def get_application_categories(self, obj):
+        return {
+            "value": obj.application_categories,
+            "label": "Application Categories",
+            "choices": django_text_choices_to_dict_list(ApplicationCategory),
+        }
+
+    class Meta:
+        model = UserPreference
+        fields = ("id", "user", "operating_system", "application_categories")
+        read_only_fields = ("id", "user")

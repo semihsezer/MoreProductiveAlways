@@ -3,21 +3,21 @@ import { getAuthAPI, getAuthAPIInstance } from "./Base";
 const authAPI = getAuthAPIInstance();
 const AuthAPI = getAuthAPI();
 
-export const UserAPI = {
-  getProfile: () => {
-    try {
-      return authAPI.get(`/api/user/profile`);
-    } catch (err) {
-      console.log(err);
-    }
-  },
-  getPreferences() {
+export const UserPreferenceAPI = {
+  get() {
     try {
       return authAPI.get(`/api/user/preference`);
     } catch (err) {
       console.log(err);
     }
   },
+  patch(id, payload) {
+    try {
+      return authAPI.patch(`/api/user/preference/${id}`, payload);
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };
 
-export default UserAPI;
+export default UserPreferenceAPI;

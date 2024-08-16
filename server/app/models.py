@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from shortuuid.django_fields import ShortUUIDField
+from app.enums import OperatingSystem
 
 # Django models go here
 
@@ -142,3 +143,14 @@ class Idea(TimestampedModel):
 
     def __str__(self):
         return f"{self.user} - {self.title}"
+
+
+class UserPreference(TimestampedModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    operating_system = models.CharField(
+        max_length=50, null=True, blank=True, choices=OperatingSystem
+    )
+    application_categories = models.JSONField(null=True, default=[])
+
+    def __str__(self):
+        return f"UserPreferences: {self.user.username}"

@@ -27,8 +27,14 @@ class IdeaAdmin(admin.ModelAdmin):
     search_fields = ["user", "title", "description", "application"]
 
 
+class UserPreferenceAdmin(admin.ModelAdmin):
+    list_display = ("user", "operating_system", "application_categories")
+    search_fields = ["user", "operating_system", "application_categories"]
+
+
 admin.site.register(models.Application, ApplicationAdmin)
 admin.site.register(models.Shortcut, ShortcutAdmin)
 admin.site.register(models.UserShortcut, UserShortcutAdmin)
 admin.site.register(models.Idea, IdeaAdmin)
 admin.site.register(models.UserApplication, UserApplicationAdmin)
+admin.site.register(models.UserPreference, UserPreferenceAdmin)
