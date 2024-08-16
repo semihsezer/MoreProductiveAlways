@@ -20,7 +20,6 @@ export default function ShortcutStatusDropdown({ status, onChange, shortcut }) {
         value={selectedStatus}
         onChange={(e) => onStatusChange(e.value)}
         options={statuses}
-        optionLabel="name"
         placeholder="New"
         className="w-full md:w-14rem"
       />
