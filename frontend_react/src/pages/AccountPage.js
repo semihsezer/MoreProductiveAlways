@@ -59,7 +59,7 @@ export default function AccountPage() {
                 <UserPreferencesForm userPreferences={userPreferences} />
                 <br />
                 <br />
-                <Button label="Logout" icon="pi pi-sign-out" severity="danger" onClick={onLogoutPressed} />
+                <Button label="Logout" icon="pi pi-sign-out" severity="secondary" onClick={onLogoutPressed} />
               </div>
             </>
           )}

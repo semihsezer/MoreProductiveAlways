@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { getAuthAPI } from "../api/Base";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { Button } from "primereact/button";
 import { onGoogleLogin } from "../auth/GoogleLogin";
+import GoogleButton from "react-google-button";
 
 const AuthAPI = getAuthAPI();
 
@@ -20,24 +24,45 @@ const Signup = (redirect_url) => {
   };
 
   return (
-    <div>
-      <h2>Sign up</h2>
+    <div style={{ display: "inline-block", maxWidth: "300px" }}>
       <form onSubmit={handleSignup}>
+        <h2>Sign up</h2>
         <div>
-          <label>Email:</label>
-          <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <InputText
+            id="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{ display: "block", width: "100%" }}
+          />
+          <Password
+            value={password}
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+            feedback={false}
+            inputStyle={{ display: "block", width: "100%", minWidth: "300px", marginTop: "15px" }}
+            toggleMask
+          />
+          <Password
+            value={confirmPassword}
+            placeholder="Confirm password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            feedback={false}
+            inputStyle={{ display: "block", width: "100%", minWidth: "300px", marginTop: "15px" }}
+            toggleMask
+          />
+          <Button
+            type="submit"
+            label="Sign Up"
+            icon="pi pi-sign-in"
+            severity="success"
+            style={{ display: "block", width: "100%", minWidth: "300px", marginTop: "15px" }}
+          />
         </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </div>
-        <div>
-          <label>Confirm Password:</label>
-          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-        </div>
-        <button type="submit">Sign Up</button>
       </form>
-      <button onClick={onGoogleLogin}>Sign up with Google</button>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
+        <GoogleButton label="Sign Up with Google" style={{ textAlign: "-webkit-center" }} onClick={onGoogleLogin} />
+      </div>
       <p>
         Already have an account? <a href="/login">Login</a>
       </p>

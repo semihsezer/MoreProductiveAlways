@@ -38,29 +38,25 @@ const Login = (redirect_url) => {
           onChange={(e) => setUsername(e.target.value)}
           style={{ display: "block", width: "100%" }}
         />
-        <br />
         <Password
           value={password}
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
           feedback={false}
-          inputStyle={{ display: "block", width: "100%", minWidth: "300px" }}
+          inputStyle={{ display: "block", width: "100%", minWidth: "300px", marginTop: "15px" }}
           helpText="test"
         />
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-        <br />
-        <br />
         <Button
           type="submit"
           label="Login"
           icon="pi pi-sign-in"
           severity="success"
-          style={{ display: "block", width: "100%", minWidth: "300px" }}
+          style={{ display: "block", width: "100%", minWidth: "300px", marginTop: "15px" }}
         />
       </form>
-      <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <GoogleButton style={{ textAlign: "-webkit-center" }} onClick={onGoogleLogin} />
+        <GoogleButton style={{ textAlign: "-webkit-center", marginTop: "15px" }} onClick={onGoogleLogin} />
       </div>
       <p>
         Don't have an account? <a href="/signup">Sign up</a>
