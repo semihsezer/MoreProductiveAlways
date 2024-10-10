@@ -6,7 +6,8 @@ ENV PYTHONPATH=/server
 
 WORKDIR /server
 COPY server/requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt &&\
+    pip3 uninstall urllib3 -y && pip3 install urllib3
 
 COPY server /server
 RUN python3 manage.py collectstatic --no-input
