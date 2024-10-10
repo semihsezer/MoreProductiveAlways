@@ -200,8 +200,8 @@ REST_AUTH = {
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": os.environ["GOOGLE_AUTH_CLIENT_ID"],
-            "secret": os.environ["GOOGLE_AUTH_CLIENT_SECRET"],
+            "client_id": os.environ.get("GOOGLE_AUTH_CLIENT_ID", ""),
+            "secret": os.environ.get("GOOGLE_AUTH_CLIENT_SECRET", ""),
             "key": "",
         },
         "SCOPE": [

@@ -11,6 +11,5 @@ RUN pip3 install -r requirements.txt
 COPY server /server
 RUN python3 manage.py collectstatic --no-input
 
-
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
-#CMD ["uwsgi", "--ini", "uwsgi.ini", "--static-map", "/static=/server/static"]
+#CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["uwsgi", "--ini", "uwsgi.ini", "--static-map", "/static=/server/static"]
