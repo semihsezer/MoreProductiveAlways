@@ -150,7 +150,7 @@ class UserPreference(TimestampedModel):
     operating_system = models.CharField(
         max_length=50, null=True, blank=True, choices=OperatingSystem
     )
-    application_categories = models.JSONField(null=True, default=[])
+    application_categories = models.JSONField(null=True, default=dict)
 
     def __str__(self):
         return f"UserPreferences: {self.user.username}"
