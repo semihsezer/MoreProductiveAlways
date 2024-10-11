@@ -20,29 +20,29 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
-  # web:
-  #   image: web
-  #   build: .
-  #   deploy:
-  #     replicas: 1
-  #     restart_policy:
-  #       condition: on-failure
-  #   environment:
-  #     DATABASE: postgres
-  #     POSTGRES_HOST: postgres
-  #     POSTGRES_USER: mpa
-  #     POSTGRES_PASSWORD: development
-  #     LOG_LEVEL: INFO
-  #   command: bash -c "tail -f /dev/null"
-  #   #command: bash -c "python manage.py makemigrations app && python manage.py migrate && python manage.py load_sample_data && python manage.py runserver 0.0.0.0:8000"
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - postgres
-  #   networks:
-  #     - mpa-net
-  #   volumes:
-  #     - ${REPO_ROOT}/server:/server
+  web:
+    image: web
+    build: ./server/Dockerfile
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    environment:
+      DATABASE: postgres
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: mpa
+      POSTGRES_PASSWORD: development
+      LOG_LEVEL: INFO
+    command: bash -c "tail -f /dev/null"
+    #command: bash -c "python manage.py makemigrations app && python manage.py migrate && python manage.py load_sample_data && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - mpa-net
+    volumes:
+      - db-data:/var/lib/postgresql/data
 
 # NGINX For SSL Termination or Load Balancing
 #  nginx:
