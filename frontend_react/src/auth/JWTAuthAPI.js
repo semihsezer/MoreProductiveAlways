@@ -29,13 +29,13 @@ jwtAuthAPI.interceptors.response.use(
 
 export const JWTAuthAPI = {
   login: async (username, password) => {
-    return axios.post("/dj-rest-auth/login/", {
+    return axios.post("/api/dj-rest-auth/login/", {
       username: username,
       password: password,
     });
   },
   signup: async (email, password1, password2) => {
-    return axios.post("/dj-rest-auth/registration/", {
+    return axios.post("/api/dj-rest-auth/registration/", {
       username: email,
       email: email,
       password1: password1,
@@ -43,13 +43,13 @@ export const JWTAuthAPI = {
     });
   },
   googleCallback: (code) => {
-    return axios.post("/dj-rest-auth/google/", { code: code }).then((res) => {
+    return axios.post("/api/dj-rest-auth/google/", { code: code }).then((res) => {
       const token = res.data.access;
     });
   },
   refreshToken: async () => {
     return axios
-      .post("/dj-rest-auth/token/refresh/", {}, { withCredentials: true })
+      .post("/api/dj-rest-auth/token/refresh/", {}, { withCredentials: true })
       .then((res) => {
         const token = res.data.access;
         return token;
@@ -61,7 +61,7 @@ export const JWTAuthAPI = {
   logout: () => {
     // TODO: handle if token missing
     // TODO: handle if refresh expired
-    return jwtAuthAPI.post("/dj-rest-auth/logout/").then((res) => {
+    return jwtAuthAPI.post("/api/dj-rest-auth/logout/").then((res) => {
       console.log("Successfully logged out");
       window.location.href = "/discover";
     });

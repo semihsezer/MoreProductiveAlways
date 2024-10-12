@@ -57,20 +57,20 @@ export const JWTAuthAPI = {
       });
   },
   login: async (username, password) => {
-    return axios.post("/dj-rest-auth/login/", {
+    return axios.post("/api/dj-rest-auth/login/", {
       username: username,
       password: password,
     });
   },
   googleCallback: (code) => {
-    return axios.post("/dj-rest-auth/google/", { code: code }).then((res) => {
+    return axios.post("/api/dj-rest-auth/google/", { code: code }).then((res) => {
       const token = res.data.access;
       localStorage.setItem("token", token);
     });
   },
   refreshToken: async () => {
     return axios
-      .post("/dj-rest-auth/token/refresh/", {}, { withCredentials: true })
+      .post("/api/dj-rest-auth/token/refresh/", {}, { withCredentials: true })
       .then((res) => {
         const token = res.data.access;
         localStorage.setItem("token", token);
@@ -83,7 +83,7 @@ export const JWTAuthAPI = {
   logout: () => {
     // TODO: handle if token missing
     // TODO: handle if refresh expired
-    return jwtAuthAPI.post("/dj-rest-auth/logout/").then((res) => {
+    return jwtAuthAPI.post("/api/dj-rest-auth/logout/").then((res) => {
       console.log("Successfully logged out");
       localStorage.removeItem("token");
       window.location.href = "/discover";

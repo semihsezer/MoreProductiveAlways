@@ -44,7 +44,7 @@ export function getCSRFToken() {
 export const SessionAuthAPI = {
   logout: () => {
     return axios
-      .post("/dj-rest-auth/logout/")
+      .post("/api/dj-rest-auth/logout/")
       .then((res) => {
         console.log("Successfully logged out");
         window.location.href = "/discover";
@@ -75,7 +75,7 @@ export const SessionAuthAPI = {
       });
   },
   signup: async (email, password1, password2) => {
-    return axios.post("/dj-rest-auth/registration/", {
+    return axios.post("/api/dj-rest-auth/registration/", {
       username: email,
       email: email,
       password1: password1,
@@ -83,14 +83,14 @@ export const SessionAuthAPI = {
     });
   },
   googleCallback: (code) => {
-    return axios.post("/dj-rest-auth/google/", { code: code });
+    return axios.post("/api/dj-rest-auth/google/", { code: code });
   },
   refreshToken: async () => {
-    return axios.post("/dj-rest-auth/token/refresh/");
+    return axios.post("/api/dj-rest-auth/token/refresh/");
   },
   isAuthenticated: () => {
     return axios
-      .get("/dj-rest-auth/user/")
+      .get("/api/dj-rest-auth/user/")
       .then((res) => {
         if (res.data && res.data.status === 200) {
           return true;
