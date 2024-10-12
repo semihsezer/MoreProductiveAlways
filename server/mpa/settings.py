@@ -182,10 +182,10 @@ SIMPLE_JWT = {
 
 LOGIN_REDIRECT_URL = "/"
 
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "https://mpa-ui-production.up.railway.app",
+    FRONTEND_URL,
 ]
 
 # Django Rest Auth
@@ -217,8 +217,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "optional"  # TODO: make it required for production
-ACCOUNT_SIGNUP_REDIRECT_URL = "http://localhost:3000/discover"
-LOGIN_REDIRECT_URL = "http://localhost:3000/discover"
+ACCOUNT_SIGNUP_REDIRECT_URL = f"{FRONTEND_URL}/discover"
+LOGIN_REDIRECT_URL = f"{FRONTEND_URL}/discover"
 
 
 # Internationalization

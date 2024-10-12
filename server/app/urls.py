@@ -41,9 +41,13 @@ urlpatterns = [
     re_path(r"^health", views.health, name="health"),
     re_path("admin/", admin.site.urls),
     re_path("signup/$", views.signup, name="signup"),
-    re_path("dj-rest-auth/", include("dj_rest_auth.urls")),
-    re_path("dj-rest-auth/registration/", include("dj_rest_auth.registration.urls")),
-    re_path("dj-rest-auth/google/", views.GoogleLogin.as_view(), name="google_login"),
+    re_path("api/dj-rest-auth/", include("dj_rest_auth.urls")),
+    re_path(
+        "api/dj-rest-auth/registration/", include("dj_rest_auth.registration.urls")
+    ),
+    re_path(
+        "api/dj-rest-auth/google/", views.GoogleLogin.as_view(), name="google_login"
+    ),
     re_path("accounts/", include("allauth.urls")),
     # re_path("accounts2/login/", views.login_user, name="login_user"),
     # re_path("accounts/logout/", views.logout_user, name="logout_user"),
