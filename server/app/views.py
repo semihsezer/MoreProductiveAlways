@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 import jwt
 from allauth.socialaccount.providers.oauth2.client import OAuth2Error
 import time
+from django.conf import settings
 
 
 import app.models as models
@@ -169,8 +170,7 @@ class GoogleOAuth2IatValidationAdapter(GoogleOAuth2Adapter):
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2IatValidationAdapter
-    # TODO: URL needs to be updated
-    callback_url = "http://localhost:3000/social/google/callback"
+    callback_url = f"{settings.FRONTEND_URL}/social/google/callback"
     client_class = OAuth2Client
 
 
