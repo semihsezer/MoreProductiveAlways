@@ -4,8 +4,10 @@ import { MultiSelect } from "primereact/multiselect";
 import UserPreferenceAPI from "../api/UserPreferenceAPI";
 
 export default function UserPreferencesForm({ userPreferences }) {
-  const [operatingSystem, setOperatingSystem] = useState(userPreferences.operating_system.value);
-  const [applicationCategories, setApplicationCategories] = useState(userPreferences.application_categories.value);
+  const [operatingSystem, setOperatingSystem] = useState(userPreferences?.operating_system?.value ?? "");
+  const [applicationCategories, setApplicationCategories] = useState(
+    userPreferences?.application_categories?.value ?? []
+  );
 
   function onOperatingSystemChange(value) {
     if (operatingSystem !== value) {
@@ -43,7 +45,7 @@ export default function UserPreferencesForm({ userPreferences }) {
           <tr>
             <td className="text-left">{userPreferences.application_categories.label}:</td>
             <td>
-              <MultiSelect
+              {/* <MultiSelect
                 value={applicationCategories}
                 onChange={(e) => onApplicationCategoriesChange(e.value)}
                 options={userPreferences.application_categories.choices}
@@ -51,7 +53,7 @@ export default function UserPreferencesForm({ userPreferences }) {
                 placeholder="Select"
                 className="w-full md:w-20rem"
                 style={{ minWidth: "100px", maxWidth: "500px" }}
-              />
+              /> */}
             </td>
           </tr>
         </tbody>
