@@ -184,6 +184,7 @@ LOGIN_REDIRECT_URL = "/"
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000")
+
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
     FRONTEND_URL,
