@@ -1,0 +1,78 @@
+# Exported from Render on 2024-10-13T09:51:44Z
+databases:
+- name: mpa-postgres
+  databaseName: mpa
+  user: mpa
+  plan: free
+  region: frankfurt
+  ipAllowList:
+  - source: 0.0.0.0/0
+    description: everywhere
+  postgresMajorVersion: "16"
+services:
+- type: web
+  name: api-mpa
+  runtime: docker
+  repo: https://github.com/semihsezer/MoreProductiveAlways
+  plan: free
+  envVars:
+  - key: PORT
+    value: 8000
+  - key: DATABASE
+    sync: false
+  - key: BACKEND_URL
+    sync: false
+  - key: FRONTEND_URL
+    sync: false
+  - key: POSTGRES_USER
+    sync: false
+  - key: POSTGRES_PASSWORD
+    fromDatabase:
+      name: mpa-postgres
+      property: password
+  - key: POSTGRES_HOST
+    fromDatabase:
+      name: mpa-postgres
+      property: host
+  - key: DJANGO_SECRET_KEY
+    sync: false
+  - key: DJANGO_ALLOWED_HOSTS
+    sync: false
+  - key: DJANGO_DEBUG
+    sync: false
+  - key: GOOGLE_AUTH_CLIENT_SECRET
+    sync: false
+  - key: GOOGLE_AUTH_CLIENT_ID
+    sync: false
+  region: frankfurt
+  dockerCommand: /bin/sh -c python manage.py migrate && python manage.py runserver
+    0.0.0.0:8000
+  dockerContext: .
+  dockerfilePath: ./Dockerfile
+  buildFilter:
+    paths:
+    - server/**
+  rootDir: server
+- type: web
+  name: moreproductivealways
+  runtime: static
+  repo: https://github.com/semihsezer/MoreProductiveAlways
+  envVars:
+  - key: REACT_APP_FRONTEND_URL
+    sync: false
+  - key: REACT_APP_BACKEND_URL
+    sync: false
+  buildCommand: npm install;CI=false npm run build
+  staticPublishPath: build
+  routes:
+  - type: rewrite
+    source: /api/*
+    destination: https://api-mpa-h80i.onrender.com/api/*
+  - type: rewrite
+    source: /*
+    destination: /index.html
+  buildFilter:
+    paths:
+    - frontend_react/**
+  rootDir: frontend_react
+version: "1"

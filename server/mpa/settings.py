@@ -37,9 +37,12 @@ DEV_KEY = "_6qt7&n^^7*414a!u$@6ivtnln*ybc3vyzt-ggzir2-@zo@8-("
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", DEV_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ["*"]
+if os.environ.get("DJANGO_ALLOWED_HOSTS"):
+    ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+else:
+    ALLOWED_HOSTS = ["*"]
 
 # Required for default site
 SITE_ID = 1
@@ -186,7 +189,6 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000")
 
 CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:3000",
     FRONTEND_URL,
     BACKEND_URL,
 ]
