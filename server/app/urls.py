@@ -38,11 +38,7 @@ router.register(r"api/bulk", views.BulkUploadViewSet, "bulk")
 
 urlpatterns = [
     re_path("", include(router.urls)),
-    # path('', views.index, name='index'),
-    re_path("version", views.version, name="version"),
-    re_path(r"^health", views.health, name="health"),
     re_path("admin/", admin.site.urls),
-    re_path("signup/$", views.signup, name="signup"),
     re_path("api/dj-rest-auth/", include("dj_rest_auth.urls")),
     re_path(
         "api/dj-rest-auth/registration/", include("dj_rest_auth.registration.urls")
@@ -51,14 +47,6 @@ urlpatterns = [
         "api/dj-rest-auth/google/", views.GoogleLogin.as_view(), name="google_login"
     ),
     re_path("accounts/", include("allauth.urls")),
-    # re_path("accounts2/login/", views.login_user, name="login_user"),
-    # re_path("accounts/logout/", views.logout_user, name="logout_user"),
-    # Ajax
-    re_path(r"^api/ajax/example$", views.example_ajax, name="example_ajax"),
-    # url(r'^api/shortcut$', views.get_shortcuts, name='get_shortcuts'),
-    # url(r'^api/user/shortcut$', views.get_user_shortcuts, name='get_user_shortcuts'),
-    # url(r'^api/applications$', views.get_applications, name='get_applications'),
-    # url(r'^api/user/ideas$', views.get_user_ideas, name='get_user_ideas'),
     re_path("api-auth/", include("rest_framework.urls")),
     re_path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
     re_path("api/token/verify", TokenVerifyView.as_view(), name="token_verify"),

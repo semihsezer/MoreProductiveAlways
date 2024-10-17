@@ -41,7 +41,6 @@ from .serializer import (
 
 
 class UserObjectPermissions(permissions.BasePermission):
-
     def has_object_permission(self, request, view, obj):
         return request.user == obj.user
 
@@ -51,97 +50,22 @@ class IsSuperUser(permissions.BasePermission):
         return request.user.is_authenticated and request.user.is_superuser
 
 
+class IsOpsAdmin(permissions.BasePermission):
+    """Users who have admin permissions in the app (not Django admin)"""
+
+    OPS_ADMIN_GROUP = "ops_admin"
+
+    def has_permission(self, request, view):
+        return (
+            request.user.is_authenticated
+            and request.user.groups.filter(name=self.OPS_ADMIN_GROUP).exists()
+        )
+
+
 class DefaultPagination(PageNumberPagination):
     page_size = 50
     page_size_query_param = "page_size"
     max_page_size = 100
-
-
-def _not_found():
-    return JsonResponse({"message": "Property Not Found"}, status=404)
-
-
-def example_ajax(request):
-    return JsonResponse({"data": "test"}, status=200)
-
-
-def login_user(request):
-    loginFail = "False"
-    message = ""
-    if request.POST:
-        user = authenticate(
-            request,
-            username=request.POST["username"].lower(),
-            password=request.POST["password"],
-        )
-
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect("/")
-        else:
-            loginFail = "True"
-            message = "Wrong credentials."
-
-    context = {"loginFail": loginFail, "message": message}
-    template = loader.get_template("bootstrap/login.html")
-    return HttpResponse(template.render(context, request))
-
-
-def logout_user(request):
-    logout(request)
-    return HttpResponseRedirect("/accounts/login/")
-
-
-def signup(request):
-    if request.user and request.user.is_authenticated:
-        return redirect("/")
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect("/")
-    else:
-        form = SignUpForm()
-    data = {"title": "Sign Up", "form": form, "submit_text": "Submit"}
-    return render(request, "signup_form.html", data)
-
-
-@login_required(login_url="/accounts/login/")
-def account(request):
-    user = request.user
-    template = loader.get_template("account.html")
-    context = {}
-    return HttpResponse(template.render(context, request))
-
-
-@login_required(login_url="/accounts/login/")
-def version(request):
-    versionArray = []
-    with open("version.txt", "r") as file:
-        versionArray = file.read().split("\n")
-    context = {"versionArray": versionArray}
-    template = loader.get_template("version.html")
-    return HttpResponse(template.render(context, request))
-
-
-def health(request):
-    # TODO:
-    data = {
-        "status": "ok",
-    }
-    return JsonResponse(data)
-
-
-@login_required(login_url="/accounts/login/")
-def index(request):
-    test_list = ["test1", "test2"]
-    context = {"test_list": test_list}
-    template = loader.get_template("home.html")
-    return HttpResponse(template.render(context, request))
 
 
 class GoogleOAuth2IatValidationAdapter(GoogleOAuth2Adapter):
@@ -323,7 +247,7 @@ class UserPreferenceViewSet(ModelViewSet):
 
 
 class BulkUploadViewSet(ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOpsAdmin]
     serializer_class = ApplicationSerializer
     queryset = models.Application.objects.all()
 
