@@ -25,6 +25,7 @@ export default function UploadPage() {
 
   return (
     <div className="card flex justify-content-center">
+      <h3>Upload Data From Excel:</h3>
       <FileUpload
         mode="basic"
         name="demo[]"

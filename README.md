@@ -59,14 +59,14 @@ Sample data can be loaded from Excel or JSON with this command:
 `python manage.py load_sample_data --delete --source=/server/app/management/scripts/sample_data.xlsx`
 
 ### Excel
-Expected Sheets and fields in the excel file
+You can provide sample data via an excel sheet. The fields and their descriptions are here:
 - Shortcut
 - UserShortcut:
     - username
     - application_name: Name of the application
     - extension: Name of extension, plugin, subsection or workflow where shortcut can be invoked
     - command: Name of command that identifies it
-    - context: 
+    - submodule: ie. extension or subcontext
     - mac: Mac shortcut
     - user_mac: Mac shortcut, user's override
     - description: Longer description of command
@@ -74,4 +74,3 @@ Expected Sheets and fields in the excel file
     - application_command: Name of command in the specific application for this shortcut, if it is different than the common command. This is to avoid different naming conventions across different applications of the same category. ie. For browsers, if Chrome calls Open Tab and Safari calls Create Tab, we want one unique name for this. Then, for Safari, command would be Open Tab and application_command would be Create Tab, the name of this command in this specific application.
 - Application
 - User
-

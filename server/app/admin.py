@@ -14,15 +14,17 @@ class UserApplicationAdmin(admin.ModelAdmin):
 
 
 class ShortcutAdmin(admin.ModelAdmin):
-    list_display = ("application", "command", "mac", "windows", "linux", "description")
-    search_fields = ["application", "command", "mac", "windows", "linux", "description"]
+    list_display = ("application", "submodule", "command", "mac")
+    search_fields = ["application", "command", "mac"]
     list_filter = ("application",)
+    ordering = ["application", "submodule", "command"]
 
 
 class UserShortcutAdmin(admin.ModelAdmin):
     list_display = ("user", "shortcut", "status")
     search_fields = ["user", "shortcut"]
     list_filter = ("shortcut__application", "status", "user")
+    ordering = ["user", "shortcut__application", "status"]
 
 
 class IdeaAdmin(admin.ModelAdmin):

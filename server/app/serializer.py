@@ -89,6 +89,7 @@ class ShortcutSerializer(ModelSerializer):
         fields = (
             "id",
             "application",
+            "submodule",
             "command",
             "mac",
             "windows",

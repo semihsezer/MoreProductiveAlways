@@ -59,15 +59,14 @@ SHORTCUT_CATEGORY_CHOICES = [
 
 
 class Shortcut(TimestampedModel):
-    # add missing fields here referenced in bootstrap.py
-    # add category field
     application = models.ForeignKey(
         Application, on_delete=models.CASCADE, db_index=True
     )
+    submodule = models.CharField(max_length=50, null=True, db_index=True)
     command = models.CharField(max_length=200, db_index=True)
-    mac = models.CharField(max_length=200, null=True, blank=True, db_index=True)
-    windows = models.CharField(max_length=200, null=True, blank=True, db_index=True)
-    linux = models.CharField(max_length=200, null=True, blank=True, db_index=True)
+    mac = models.CharField(max_length=50, null=True, blank=True, db_index=True)
+    windows = models.CharField(max_length=50, null=True, blank=True, db_index=True)
+    linux = models.CharField(max_length=50, null=True, blank=True, db_index=True)
     category = models.CharField(
         max_length=20,
         choices=SHORTCUT_CATEGORY_CHOICES,
