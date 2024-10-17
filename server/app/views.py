@@ -14,17 +14,18 @@ from django.conf import settings
 import app.models as models
 import app.utils as utils
 from app.forms import SignUpForm
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.generics import CreateAPIView
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.mixins import ListModelMixin, UpdateModelMixin
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.pagination import PageNumberPagination
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
+from rest_framework import status
 from .serializer import (
     ApplicationSerializer,
     ShortcutSerializer,
@@ -43,6 +44,11 @@ class UserObjectPermissions(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.user == obj.user
+
+
+class IsSuperUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_superuser
 
 
 class DefaultPagination(PageNumberPagination):
@@ -314,3 +320,29 @@ class UserPreferenceViewSet(ModelViewSet):
             user=request.user
         )
         return Response(UserPreferenceSerializer(user_preference).data)
+
+
+class BulkUploadViewSet(ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ApplicationSerializer
+    queryset = models.Application.objects.all()
+
+    @action(
+        detail=False, methods=["POST"], url_path="upload_excel", url_name="upload-excel"
+    )
+    def upload_excel(self, request):
+        from openpyxl import load_workbook
+        from .management.scripts.bootstrap import load_sample_data_from_workbook
+
+        csv_file = request.FILES.get("file")
+        if not csv_file:
+            return Response(
+                {"message": "Please provide a file."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        wb = load_workbook(csv_file)
+        load_sample_data_from_workbook(wb)
+        return Response(
+            {"message": "Excel file uploaded successfully"}, status=status.HTTP_200_OK
+        )

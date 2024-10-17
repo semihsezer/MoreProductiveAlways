@@ -33,6 +33,8 @@ router.register(r"api/user/preference", views.UserPreferenceViewSet)
 router.register(
     r"api/discover/shortcut", views.DiscoverShortcutViewSet, "discover-shortcut"
 )
+router.register(r"api/bulk", views.BulkUploadViewSet, "bulk")
+
 
 urlpatterns = [
     re_path("", include(router.urls)),

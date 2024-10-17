@@ -13,6 +13,7 @@ import IdeasPage from "./pages/IdeasPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import GoogleCallback from "./components/GoogleCallback";
+import UploadPage from "./pages/UploadPage";
 import history from "./history";
 
 const router = createBrowserRouter([
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <SignupPage />,
+      },
+      {
+        path: "/bulk/upload",
+        element: <UploadPage />,
       },
     ],
   },
