@@ -15,4 +15,11 @@ export const UploadAPI = {
       console.log(err);
     }
   },
+  exportFile: () => {
+    try {
+      return authAPI.get("/api/bulk/export_excel", { responseType: "blob" });
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };

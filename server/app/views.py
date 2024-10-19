@@ -12,8 +12,11 @@ from django.conf import settings
 
 
 import app.models as models
-import app.utils as utils
-from app.forms import SignUpForm
+from openpyxl import load_workbook
+from .management.scripts.bootstrap import (
+    export_data_to_workbook,
+    load_sample_data_from_workbook,
+)
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.generics import CreateAPIView
 from rest_framework import permissions
@@ -255,18 +258,27 @@ class BulkUploadViewSet(ModelViewSet):
         detail=False, methods=["POST"], url_path="upload_excel", url_name="upload-excel"
     )
     def upload_excel(self, request):
-        from openpyxl import load_workbook
-        from .management.scripts.bootstrap import load_sample_data_from_workbook
-
-        csv_file = request.FILES.get("file")
-        if not csv_file:
+        excel_file = request.FILES.get("file")
+        if not excel_file:
             return Response(
                 {"message": "Please provide a file."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        wb = load_workbook(csv_file)
+        wb = load_workbook(excel_file)
         load_sample_data_from_workbook(wb)
         return Response(
             {"message": "Excel file uploaded successfully"}, status=status.HTTP_200_OK
         )
+
+    @action(
+        detail=False, methods=["GET"], url_path="export_excel", url_name="export-excel"
+    )
+    def export_excel(self, request):
+        wb = export_data_to_workbook()
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = "attachment; filename=sample_data.xlsx"
+        wb.save(response)
+        return response

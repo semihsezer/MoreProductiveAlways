@@ -55,7 +55,7 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: "/bulk/upload",
+        path: "/ops/export",
         element: <UploadPage />,
       },
     ],

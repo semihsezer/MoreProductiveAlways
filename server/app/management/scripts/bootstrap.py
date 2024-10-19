@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from .sample_data import applications, shortcuts, user_shortcuts, users
 import app.models as models
 from openpyxl import load_workbook, Workbook
 
@@ -45,7 +44,7 @@ def load_sample_data_from_workbook(wb, create_users=False):
 
         models.User.objects.bulk_create(temp_users, ignore_conflicts=True)
 
-    # Create Application objects from df_application
+    # Create Application objects
     sheet = wb["Application"]
     headers = [cell.value for cell in sheet[1]]
     temp_applications = []
@@ -60,8 +59,8 @@ def load_sample_data_from_workbook(wb, create_users=False):
 
     models.Application.objects.bulk_create(temp_applications, ignore_conflicts=True)
 
-    # Create Shortcut objects from df_user_shortcut
-    sheet = wb["UserShortcut"]
+    # Create Shortcut objects
+    sheet = wb["Shortcut"]
     headers = [cell.value for cell in sheet[1]]
     temp_shortcuts = []
     for _row in sheet.iter_rows(min_row=2, values_only=True):
@@ -71,8 +70,12 @@ def load_sample_data_from_workbook(wb, create_users=False):
         application = models.Application.objects.get(name=row["application_name"])
         temp_shortcut = models.Shortcut(
             application=application,
+            submodule=row["submodule"],
             command=row["command"],
+            context=row["context"],
             mac=row["mac"],
+            windows=row["windows"],
+            linux=row["linux"],
             description=row["description"],
             application_command=row["application_command"],
         )
@@ -89,7 +92,6 @@ def load_sample_data_from_workbook(wb, create_users=False):
         if all(value is None for value in _row):
             continue
         row = dict(zip(headers, _row))
-        user = models.User.objects.get(username=row["username"])
         shortcut = models.Shortcut.objects.get(
             application__name=row["application_name"], command=row["command"]
         )
@@ -97,12 +99,107 @@ def load_sample_data_from_workbook(wb, create_users=False):
             user=User.objects.get(username=row["username"]),
             shortcut=shortcut,
             user_mac=row["user_mac"],
-            status=row["category"],
+            user_windows=row.get("user_windows"),
+            user_linux=row.get("user_linux"),
+            status=row["status"],
         )
         temp_user_shortcuts.append(temp_user_shortcut)
 
     # Bulk create UserShortcut objects, ignore conflicts
     models.UserShortcut.objects.bulk_create(temp_user_shortcuts, ignore_conflicts=True)
+
+
+def export_data_to_workbook():
+    # Create workbook
+    wb = Workbook()
+    del wb["Sheet"]
+
+    # Export Application objects
+    wb.create_sheet("Application")
+    sheet = wb["Application"]
+    applications = models.Application.objects.all()
+    headers = ["name", "description", "category"]
+    sheet.append(headers)
+    for app in applications:
+        sheet.append([app.name, app.description, app.category])
+
+    # Export Shortcut objects
+    wb.create_sheet("Shortcut")
+    sheet = wb["Shortcut"]
+    shortcuts = models.Shortcut.objects.all()
+    headers = [
+        "application_name",
+        "submodule",
+        "command",
+        "context",
+        "mac",
+        "windows",
+        "linux",
+        "description",
+        "application_command",
+        "category",
+    ]
+    sheet.append(headers)
+    for shortcut in shortcuts:
+        sheet.append(
+            [
+                shortcut.application.name,
+                shortcut.submodule,
+                shortcut.command,
+                shortcut.context,
+                shortcut.mac,
+                shortcut.windows,
+                shortcut.linux,
+                shortcut.description,
+                shortcut.application_command,
+                shortcut.category,
+            ]
+        )
+
+    # Export UserShortcut objects
+    wb.create_sheet("UserShortcut")
+    sheet = wb["UserShortcut"]
+    user_shortcuts = models.UserShortcut.objects.prefetch_related(
+        "user", "shortcut", "shortcut__application"
+    ).all()
+    headers = [
+        "username",
+        "application_name",
+        "submodule",
+        "command",
+        "context",
+        "mac",
+        "user_mac",
+        "windows",
+        "user_windows",
+        "linux",
+        "user_linux",
+        "description",
+        "status",
+        "application_command",
+    ]
+    sheet.append(headers)
+    for user_shortcut in user_shortcuts:
+        sheet.append(
+            [
+                user_shortcut.user.username,
+                user_shortcut.shortcut.application.name,
+                user_shortcut.shortcut.submodule,
+                user_shortcut.shortcut.command,
+                user_shortcut.shortcut.context,
+                user_shortcut.shortcut.mac,
+                user_shortcut.user_mac,
+                user_shortcut.shortcut.windows,
+                user_shortcut.user_windows,
+                user_shortcut.shortcut.linux,
+                user_shortcut.user_linux,
+                user_shortcut.shortcut.description,
+                user_shortcut.status,
+                user_shortcut.shortcut.application_command,
+            ]
+        )
+
+    return wb
 
 
 def create_admin_user(username, email, password):

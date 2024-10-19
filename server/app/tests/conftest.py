@@ -1,19 +1,29 @@
 import pytest
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group, Permission
 from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from factories import UserFactory
+from app.views import IsOpsAdmin
 
 
 @pytest.fixture
-def user_1():
+def user1():
     return UserFactory(username="user1", password="test")
 
 
 @pytest.fixture
-def user_2():
+def user2():
     return UserFactory(username="user2", password="test")
+
+
+@pytest.fixture
+def ops_user():
+    user = UserFactory(username="ops_user", password="test")
+    group_name = Group.objects.get(name=IsOpsAdmin.OPS_ADMIN_GROUP)
+    user.groups.add(group_name)
+    user.save()
+    return user
 
 
 def make_client(user):
@@ -32,3 +42,8 @@ def auth_client(user_1):
 @pytest.fixture
 def auth_client_user2(user_2):
     return make_client(user_2)
+
+
+@pytest.fixture
+def ops_client(ops_user):
+    return make_client(ops_user)

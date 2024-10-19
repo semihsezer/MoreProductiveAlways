@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Toast } from "primereact/toast";
 import { FileUpload } from "primereact/fileupload";
 import { UploadAPI } from "../api/UploadAPI";
+import { Button } from "primereact/button";
 
 export default function UploadPage() {
   const customBase64Uploader = (event) => {
@@ -23,9 +24,29 @@ export default function UploadPage() {
     reader.readAsArrayBuffer(event.files[0]);
   };
 
+  const downloadFile = async () => {
+    try {
+      UploadAPI.exportFile().then((response) => {
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = "mpa_export.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+    } catch (error) {
+      console.error("There was a problem with exporting data:", error);
+    }
+  };
+
   return (
     <div className="card flex justify-content-center">
-      <h3>Upload Data From Excel:</h3>
+      <h3>Upload From Excel:</h3>
       <FileUpload
         mode="basic"
         name="demo[]"
@@ -33,7 +54,11 @@ export default function UploadPage() {
         customUpload
         uploadHandler={customBase64Uploader}
         maxFileSize={1000000}
+        chooseLabel="Upload Excel"
       />
+      <br />
+      <h3>Export Data:</h3>
+      <Button onClick={downloadFile} label="Export Data"></Button>
     </div>
   );
 }

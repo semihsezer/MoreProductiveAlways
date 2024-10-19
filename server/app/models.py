@@ -64,6 +64,7 @@ class Shortcut(TimestampedModel):
     )
     submodule = models.CharField(max_length=50, null=True, db_index=True)
     command = models.CharField(max_length=200, db_index=True)
+    context = models.CharField(max_length=200, default="", null=True, db_index=True)
     mac = models.CharField(max_length=50, null=True, blank=True, db_index=True)
     windows = models.CharField(max_length=50, null=True, blank=True, db_index=True)
     linux = models.CharField(max_length=50, null=True, blank=True, db_index=True)
