@@ -170,7 +170,16 @@ class UserShortcutViewSet(ModelViewSet, ListModelMixin):
         return self.serializer_class
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(user=self.request.user)
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user)
+            .order_by(
+                "shortcut__application__name",
+                "shortcut__submodule",
+                "shortcut__command",
+            )
+        )
         return queryset
 
     def partial_update(self, request, *args, **kwargs):

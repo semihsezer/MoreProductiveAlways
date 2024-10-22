@@ -35,13 +35,13 @@ def make_client(user):
 
 
 @pytest.fixture
-def auth_client(user_1):
-    return make_client(user_1)
+def auth_client(user1):
+    return make_client(user1)
 
 
 @pytest.fixture
-def auth_client_user2(user_2):
-    return make_client(user_2)
+def auth_client_user2(user2):
+    return make_client(user2)
 
 
 @pytest.fixture
