@@ -25,7 +25,7 @@ class TestBulkUploadView:
     def filename(self, user1):
         # We implicitly create user1, which is referred in the file
         filename = "server/app/tests/files/test_data.xlsx"
-        Config.objects.create(name="SOURCE_DATA_FILENAME", value=filename)
+        Config.objects.create(key="SOURCE_DATA_FILENAME", value=filename)
         return "server/app/tests/files/test_data.xlsx"
 
     def test_no_file(self, ops_client, url):
@@ -63,7 +63,7 @@ class TestBulkUploadView:
         assert UserShortcut.objects.count() > initial_usershortcut_count
 
     def test_export_data_to_workbook(self, filename):
-        load_sample_data_from_excel(filename=filename, create_users=True)
+        load_sample_data_from_excel(filename=filename)
         wb = export_data_to_workbook()
         assert wb.sheetnames == ["Application", "Shortcut", "UserShortcut"]
 
@@ -78,7 +78,7 @@ class TestBulkUploadView:
         assert wb["UserShortcut"].max_column > 1
 
     def test_export(self, ops_client, filename):
-        load_sample_data_from_excel(filename=filename, create_users=True)
+        load_sample_data_from_excel(filename=filename)
         url = "/api/bulk/export_excel"
         res = ops_client.get(url)
 

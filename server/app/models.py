@@ -47,11 +47,14 @@ class Shortcut(TimestampedModel):
         Application, on_delete=models.CASCADE, db_index=True
     )
     submodule = models.CharField(max_length=50, blank=True, db_index=True)
+    command_id = models.CharField(max_length=200, null=True, db_index=True)
     command = models.CharField(max_length=200, db_index=True)
     context = models.CharField(max_length=200, default="", blank=True, db_index=True)
     mac = models.CharField(max_length=50, blank=True, db_index=True)
     windows = models.CharField(max_length=50, blank=True, db_index=True)
     linux = models.CharField(max_length=50, blank=True, db_index=True)
+
+    level = models.PositiveIntegerField(null=True, db_index=True)
     category = models.CharField(
         max_length=20,
         choices=SHORTCUT_CATEGORY_CHOICES,
@@ -64,7 +67,10 @@ class Shortcut(TimestampedModel):
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
 
     class Meta:
-        unique_together = ("application", "submodule", "command")
+        unique_together = [
+            ("application", "submodule", "command"),
+            ("application", "submodule", "command_id"),
+        ]
 
     def __str__(self):
         return f"{self.application} - {self.command} - {self.mac}"

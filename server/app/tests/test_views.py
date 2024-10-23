@@ -22,7 +22,7 @@ class TestIdeaViews:
 
     def test_anon_user_cannot_create(self, anon_client):
         response = anon_client.post(self.url(), data={})
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     def test_create(self, auth_client):
         title, desc = "title", "desc"
@@ -38,7 +38,7 @@ class TestIdeaViews:
         idea = IdeaFactory(user=auth_client.user)
 
         response = anon_client.get(self.url(idea))
-        assert response.status_code == 403
+        assert response.status_code == 401
 
         response = auth_client_user2.get(self.url(idea))
         assert response.status_code == 404

@@ -12,7 +12,7 @@ def load_sample_data(source="sample_data.json", delete=False):
     if source.endswith(".json"):
         load_sample_data_from_json(filename=source)
     elif source.endswith(".xlsx"):
-        load_sample_data_from_excel(filename=source, create_users=True)
+        load_sample_data_from_excel(filename=source)
     else:
         raise Exception(
             "Invalid source file type. Please use either .json or .xlsx. Got filename: {source}"
@@ -23,27 +23,12 @@ def load_sample_data_from_json(filename="sample_data.json"):
     raise ("Not Implemented: load_sample_data_from_json")
 
 
-def load_sample_data_from_excel(filename="sample_data.xlsx", create_users=False):
+def load_sample_data_from_excel(filename="sample_data.xlsx"):
     wb = load_workbook(filename=filename)
-    load_sample_data_from_workbook(wb, create_users=create_users)
+    load_sample_data_from_workbook(wb)
 
 
-def load_sample_data_from_workbook(wb, create_users=False):
-    if create_users:
-        # Create User objects
-        sheet = wb["User"]
-        temp_users = []
-        headers = [cell.value for cell in sheet[1]]
-        for _row in sheet.iter_rows(min_row=2, values_only=True):
-            if all(value is None for value in _row):
-                continue
-            row = dict(zip(headers, _row))
-            temp_user = models.User(username=row["username"], email=row["email"])
-            temp_user.set_password(row.get("password", "User123"))
-            temp_users.append(temp_user)
-
-        models.User.objects.bulk_create(temp_users, ignore_conflicts=True)
-
+def load_sample_data_from_workbook(wb):
     # Create Application objects
     sheet = wb["Application"]
     headers = [cell.value for cell in sheet[1]]
@@ -74,10 +59,12 @@ def load_sample_data_from_workbook(wb, create_users=False):
             application=application,
             submodule=row["submodule"] or "",
             command=row["command"],
+            command_id=row["command_id"],
             context=row["context"] or "",
             mac=row["mac"] or "",
             windows=row["windows"] or "",
             linux=row["linux"] or "",
+            level=row["level"],
             description=row["description"] or "",
             application_command=row["application_command"] or "",
         )
@@ -95,7 +82,9 @@ def load_sample_data_from_workbook(wb, create_users=False):
             continue
         row = dict(zip(headers, _row))
         shortcut = models.Shortcut.objects.get(
-            application__name=row["application_name"], command=row["command"]
+            application__name=row["application_name"],
+            submodule=row["submodule"] or "",
+            command_id=row["command_id"],
         )
         temp_user_shortcut = models.UserShortcut(
             user=User.objects.get(username=row["username"]),
@@ -132,14 +121,16 @@ def export_data_to_workbook():
     headers = [
         "application_name",
         "submodule",
+        "command_id",
         "command",
-        "context",
         "mac",
         "windows",
         "linux",
         "description",
         "application_command",
+        "level",
         "category",
+        "context",
     ]
     sheet.append(headers)
     for shortcut in shortcuts:
@@ -147,14 +138,16 @@ def export_data_to_workbook():
             [
                 shortcut.application.name,
                 shortcut.submodule,
+                shortcut.command_id,
                 shortcut.command,
-                shortcut.context,
                 shortcut.mac,
                 shortcut.windows,
                 shortcut.linux,
                 shortcut.description,
                 shortcut.application_command,
+                shortcut.level,
                 shortcut.category,
+                shortcut.context,
             ]
         )
 
@@ -168,17 +161,11 @@ def export_data_to_workbook():
         "username",
         "application_name",
         "submodule",
-        "command",
-        "context",
-        "mac",
+        "command_id",
         "user_mac",
-        "windows",
         "user_windows",
-        "linux",
         "user_linux",
-        "description",
         "status",
-        "application_command",
     ]
     sheet.append(headers)
     for user_shortcut in user_shortcuts:
@@ -187,17 +174,11 @@ def export_data_to_workbook():
                 user_shortcut.user.username,
                 user_shortcut.shortcut.application.name,
                 user_shortcut.shortcut.submodule,
-                user_shortcut.shortcut.command,
-                user_shortcut.shortcut.context,
-                user_shortcut.shortcut.mac,
+                user_shortcut.shortcut.command_id,
                 user_shortcut.user_mac,
-                user_shortcut.shortcut.windows,
                 user_shortcut.user_windows,
-                user_shortcut.shortcut.linux,
                 user_shortcut.user_linux,
-                user_shortcut.shortcut.description,
                 user_shortcut.status,
-                user_shortcut.shortcut.application_command,
             ]
         )
 
@@ -214,4 +195,3 @@ def delete_sample_data():
     models.Application.objects.all().delete()
     models.Shortcut.objects.all().delete()
     models.UserShortcut.objects.all().delete()
-    models.User.objects.exclude(username="admin").all().delete()
