@@ -15,6 +15,13 @@ export const UploadAPI = {
       console.log(err);
     }
   },
+  loadFromSource: () => {
+    try {
+      return authAPI.post("/api/bulk/load_from_source");
+    } catch (err) {
+      console.log(err);
+    }
+  },
   exportFile: () => {
     try {
       return authAPI.get("/api/bulk/export_excel", { responseType: "blob" });

@@ -44,6 +44,16 @@ export default function UploadPage() {
     }
   };
 
+  const loadFromSource = async () => {
+    try {
+      UploadAPI.loadFromSource().then((response) => {
+        console.log("Loaded from source successfully!");
+      });
+    } catch (error) {
+      console.error("There was a problem with loading from source:", error);
+    }
+  };
+
   return (
     <div className="card flex justify-content-center">
       <h3>Upload From Excel:</h3>
@@ -59,6 +69,9 @@ export default function UploadPage() {
       <br />
       <h3>Export Data:</h3>
       <Button onClick={downloadFile} label="Export Data"></Button>
+      <br />
+      <h3>Load from Source:</h3>
+      <Button onClick={loadFromSource} label="Load from Source"></Button>
     </div>
   );
 }

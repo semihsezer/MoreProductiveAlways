@@ -12,6 +12,7 @@ from django.conf import settings
 
 
 import app.models as models
+from core.models import Config
 from openpyxl import load_workbook
 from .management.scripts.bootstrap import (
     export_data_to_workbook,
@@ -20,6 +21,7 @@ from .management.scripts.bootstrap import (
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.generics import CreateAPIView
 from rest_framework import permissions
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.pagination import PageNumberPagination
@@ -278,6 +280,24 @@ class BulkUploadViewSet(ModelViewSet):
         load_sample_data_from_workbook(wb)
         return Response(
             {"message": "Excel file uploaded successfully"}, status=status.HTTP_200_OK
+        )
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        url_path="load_from_source",
+        url_name="load-from-source",
+    )
+    def load_from_source(self, request: Request):
+        filename = Config.get(
+            "SOURCE_DATA_FILENAME",
+            default="server/app/management/scripts/sample_data.xlsx",
+        )
+        wb = load_workbook(filename=filename)
+        load_sample_data_from_workbook(wb)
+        return Response(
+            {"message": "Data from source uploaded successfully"},
+            status=status.HTTP_200_OK,
         )
 
     @action(

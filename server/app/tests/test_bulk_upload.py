@@ -4,7 +4,7 @@ import os, django
 from django.core.files.uploadedfile import SimpleUploadedFile
 from openpyxl import load_workbook, Workbook
 from app.models import Application, Shortcut, UserShortcut
-from django.contrib.auth.models import User
+from core.models import Config
 
 from app.management.scripts.bootstrap import (
     load_sample_data_from_excel,
@@ -24,6 +24,8 @@ class TestBulkUploadView:
     @pytest.fixture
     def filename(self, user1):
         # We implicitly create user1, which is referred in the file
+        filename = "server/app/tests/files/test_data.xlsx"
+        Config.objects.create(name="SOURCE_DATA_FILENAME", value=filename)
         return "server/app/tests/files/test_data.xlsx"
 
     def test_no_file(self, ops_client, url):
@@ -46,6 +48,19 @@ class TestBulkUploadView:
             assert Application.objects.count() > initial_application_count
             assert Shortcut.objects.count() > initial_shortcut_count
             assert UserShortcut.objects.count() > initial_usershortcut_count
+
+    def test_load_from_source(self, ops_client, filename):
+        initial_application_count = Application.objects.count()
+        initial_shortcut_count = Shortcut.objects.count()
+        initial_usershortcut_count = UserShortcut.objects.count()
+
+        url = "/api/bulk/load_from_source"
+        res = ops_client.post(url)
+
+        assert res.status_code == 200
+        assert Application.objects.count() > initial_application_count
+        assert Shortcut.objects.count() > initial_shortcut_count
+        assert UserShortcut.objects.count() > initial_usershortcut_count
 
     def test_export_data_to_workbook(self, filename):
         load_sample_data_from_excel(filename=filename, create_users=True)

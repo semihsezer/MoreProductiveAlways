@@ -4,23 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from shortuuid.django_fields import ShortUUIDField
 from app.enums import OperatingSystem
-
-# Django models go here
-
-
-class BaseModel(models.Model):
-    id = ShortUUIDField(primary_key=True, editable=False)
-
-    class Meta:
-        abstract = True
-
-
-class TimestampedModel(BaseModel):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
+from core.models import BaseModel, TimestampedModel
 
 
 class Application(TimestampedModel):

@@ -53,7 +53,9 @@ def load_sample_data_from_workbook(wb, create_users=False):
             continue
         row = dict(zip(headers, _row))
         temp_application = models.Application(
-            name=row["name"], description=row["description"], category=row["category"]
+            name=row["name"],
+            description=row["description"] or "",
+            category=row["category"] or "",
         )
         temp_applications.append(temp_application)
 
@@ -70,14 +72,14 @@ def load_sample_data_from_workbook(wb, create_users=False):
         application = models.Application.objects.get(name=row["application_name"])
         temp_shortcut = models.Shortcut(
             application=application,
-            submodule=row["submodule"],
+            submodule=row["submodule"] or "",
             command=row["command"],
-            context=row["context"],
-            mac=row["mac"],
-            windows=row["windows"],
-            linux=row["linux"],
-            description=row["description"],
-            application_command=row["application_command"],
+            context=row["context"] or "",
+            mac=row["mac"] or "",
+            windows=row["windows"] or "",
+            linux=row["linux"] or "",
+            description=row["description"] or "",
+            application_command=row["application_command"] or "",
         )
         temp_shortcuts.append(temp_shortcut)
 
@@ -98,9 +100,9 @@ def load_sample_data_from_workbook(wb, create_users=False):
         temp_user_shortcut = models.UserShortcut(
             user=User.objects.get(username=row["username"]),
             shortcut=shortcut,
-            user_mac=row["user_mac"],
-            user_windows=row.get("user_windows"),
-            user_linux=row.get("user_linux"),
+            user_mac=row["user_mac"] or "",
+            user_windows=row["user_windows"] or "",
+            user_linux=row["user_linux"] or "",
             status=row["status"],
         )
         temp_user_shortcuts.append(temp_user_shortcut)
