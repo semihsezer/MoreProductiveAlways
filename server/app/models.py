@@ -47,7 +47,7 @@ class Shortcut(TimestampedModel):
         Application, on_delete=models.CASCADE, db_index=True
     )
     submodule = models.CharField(max_length=50, blank=True, db_index=True)
-    command_id = models.CharField(max_length=200, null=True, db_index=True)
+    command_id = models.CharField(max_length=200, db_index=True)
     command = models.CharField(max_length=200, db_index=True)
     context = models.CharField(max_length=200, default="", blank=True, db_index=True)
     mac = models.CharField(max_length=50, blank=True, db_index=True)
